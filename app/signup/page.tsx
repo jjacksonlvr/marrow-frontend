@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
+import { supabase } from "@/lib/supabase";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -12,8 +13,9 @@ export default function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newErrors: Record<string, string> = {};
     
     if (!email) {
@@ -41,8 +43,28 @@ export default function SignupPage() {
     setErrors(newErrors);
     
     if (Object.keys(newErrors).length === 0) {
-      // Success - redirect to onboarding
-      window.location.href = '/onboard';
+      setIsLoading(true);
+      
+      try {
+        // Create auth account
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+
+        if (authError) {
+          setErrors({ general: authError.message });
+          setIsLoading(false);
+          return;
+        }
+
+        // Success - redirect to onboarding
+        window.location.href = '/onboard';
+      } catch (error) {
+        console.error('Signup error:', error);
+        setErrors({ general: 'An unexpected error occurred. Please try again.' });
+        setIsLoading(false);
+      }
     }
   };
 
@@ -67,6 +89,13 @@ export default function SignupPage() {
 
         {/* Form Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
+          {/* General Error */}
+          {errors.general && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{errors.general}</p>
+            </div>
+          )}
+
           <div className="space-y-6">
             {/* Email */}
             <div>
@@ -78,11 +107,12 @@ export default function SignupPage() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
                 className={`w-full px-4 py-3 rounded-lg border-2 transition-colors ${
                   errors.email
                     ? "border-red-300 focus:border-red-500"
                     : "border-slate-200 focus:border-blue-500"
-                } outline-none`}
+                } outline-none disabled:opacity-50 disabled:cursor-not-allowed`}
                 placeholder="you@company.com"
               />
               {errors.email && (
@@ -101,17 +131,19 @@ export default function SignupPage() {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
                   className={`w-full px-4 py-3 rounded-lg border-2 transition-colors pr-12 ${
                     errors.password
                       ? "border-red-300 focus:border-red-500"
                       : "border-slate-200 focus:border-blue-500"
-                  } outline-none`}
+                  } outline-none disabled:opacity-50 disabled:cursor-not-allowed`}
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  disabled={isLoading}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 disabled:opacity-50"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -132,17 +164,19 @@ export default function SignupPage() {
                   id="confirmPassword"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={isLoading}
                   className={`w-full px-4 py-3 rounded-lg border-2 transition-colors pr-12 ${
                     errors.confirmPassword
                       ? "border-red-300 focus:border-red-500"
                       : "border-slate-200 focus:border-blue-500"
-                  } outline-none`}
+                  } outline-none disabled:opacity-50 disabled:cursor-not-allowed`}
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  disabled={isLoading}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 disabled:opacity-50"
                 >
                   {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -160,7 +194,8 @@ export default function SignupPage() {
                     type="checkbox"
                     checked={agreedToTerms}
                     onChange={(e) => setAgreedToTerms(e.target.checked)}
-                    className="w-5 h-5 rounded border-2 border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
+                    disabled={isLoading}
+                    className="w-5 h-5 rounded border-2 border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
                 <span className="text-sm text-slate-600 leading-relaxed">
@@ -182,9 +217,17 @@ export default function SignupPage() {
             {/* Submit Button */}
             <button
               onClick={handleSubmit}
-              className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-lg transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40"
+              disabled={isLoading}
+              className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-lg transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Create Account
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Creating Account...</span>
+                </>
+              ) : (
+                "Create Account"
+              )}
             </button>
           </div>
 

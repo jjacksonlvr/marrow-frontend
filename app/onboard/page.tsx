@@ -1,11 +1,14 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, Chrome, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/lib/supabase";
 
 export default function OnboardingWizard() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState<string>("");
   const [formData, setFormData] = useState({
     name: "",
     linkedinUrl: "",
@@ -23,6 +26,20 @@ export default function OnboardingWizard() {
 
   const totalSteps = 6;
 
+  useEffect(() => {
+    // Get current user
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+      } else {
+        // Not logged in, redirect to signup
+        window.location.href = '/signup';
+      }
+    };
+    getCurrentUser();
+  }, []);
+
   const updateFormData = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -39,10 +56,61 @@ export default function OnboardingWizard() {
     }
   };
 
-  const completeSetup = () => {
-    // TODO: Save data to Supabase
-    alert("Onboarding complete! Redirecting to download extension...");
-    // window.location.href = '/dashboard';
+  const completeSetup = async () => {
+    setIsLoading(true);
+
+    try {
+      // Get user email
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        alert('Not authenticated. Please sign up first.');
+        window.location.href = '/signup';
+        return;
+      }
+
+      // Convert price string to cents
+      const priceString = formData.price.replace('$', '').replace(',', '');
+      const priceCents = parseFloat(priceString) * 100;
+
+      // Insert into users table
+      const { data, error } = await supabase
+        .from('users')
+        .insert([
+          {
+            id: user.id,
+            email: user.email,
+            linkedin_slug: formData.linkedinUrl,
+            title: formData.offerTitle,
+            description: formData.offerDescription,
+            price_cents: priceCents,
+            bullet_title_1: formData.benefit1Title,
+            bullet_desc_1: formData.benefit1Description,
+            bullet_title_2: formData.benefit2Title,
+            bullet_desc_2: formData.benefit2Description,
+            bullet_title_3: formData.benefit3Title,
+            bullet_desc_3: formData.benefit3Description,
+            booking_url: formData.calendlyUrl,
+            is_active: true,
+          }
+        ]);
+
+      if (error) {
+        console.error('Error saving data:', error);
+        alert(`Error: ${error.message}`);
+        setIsLoading(false);
+        return;
+      }
+
+      // Success!
+      alert('Profile created successfully! Download the extension to get started.');
+      // TODO: Redirect to dashboard or extension download
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      alert('An unexpected error occurred. Please try again.');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -397,9 +465,9 @@ export default function OnboardingWizard() {
             <div className="flex items-center justify-between mt-10 pt-8 border-t border-slate-200">
               <button
                 onClick={prevStep}
-                disabled={currentStep === 1}
+                disabled={currentStep === 1 || isLoading}
                 className={`px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 ${
-                  currentStep === 1
+                  currentStep === 1 || isLoading
                     ? "text-slate-300 cursor-not-allowed"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                 }`}
@@ -411,16 +479,25 @@ export default function OnboardingWizard() {
               {currentStep < totalSteps ? (
                 <button
                   onClick={nextStep}
-                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg shadow-blue-600/25"
+                  disabled={isLoading}
+                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg shadow-blue-600/25 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Continue
                 </button>
               ) : (
                 <button
                   onClick={completeSetup}
-                  className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-all shadow-lg shadow-green-600/25"
+                  disabled={isLoading}
+                  className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-all shadow-lg shadow-green-600/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  Complete Setup
+                  {isLoading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    "Complete Setup"
+                  )}
                 </button>
               )}
             </div>
