@@ -64,8 +64,8 @@ export default function SuccessPage() {
           script.async = true;
           script.onload = () => {
             // Initialize Calendly after script loads
-            if (window.Calendly) {
-              window.Calendly.initInlineWidget({
+            if ((window as any).Calendly) {
+              (window as any).Calendly.initInlineWidget({
                 url: data.booking_url,
                 parentElement: document.querySelector('.calendly-inline-widget'),
               });
