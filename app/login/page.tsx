@@ -5,13 +5,10 @@ import { Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 
-export default function SignupPage() {
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,18 +23,6 @@ export default function SignupPage() {
     
     if (!password) {
       newErrors.password = "Password is required";
-    } else if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-    
-    if (!confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-    
-    if (!agreedToTerms) {
-      newErrors.terms = "You must agree to the Terms of Service";
     }
     
     setErrors(newErrors);
@@ -46,22 +31,33 @@ export default function SignupPage() {
       setIsLoading(true);
       
       try {
-        // Create auth account
-        const { data: authData, error: authError } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
 
-        if (authError) {
-          setErrors({ general: authError.message });
+        if (error) {
+          setErrors({ general: error.message });
           setIsLoading(false);
           return;
         }
 
-        // Success - redirect to onboarding
-        window.location.href = '/onboard';
+        // Check if user has completed onboarding
+        const { data: userData } = await supabase
+          .from('users')
+          .select('linkedin_slug')
+          .eq('id', data.user.id)
+          .single();
+
+        if (userData && userData.linkedin_slug) {
+          // User has completed onboarding - go to dashboard (or home for now)
+          window.location.href = '/';
+        } else {
+          // User hasn't completed onboarding
+          window.location.href = '/onboard';
+        }
       } catch (error) {
-        console.error('Signup error:', error);
+        console.error('Login error:', error);
         setErrors({ general: 'An unexpected error occurred. Please try again.' });
         setIsLoading(false);
       }
@@ -83,8 +79,8 @@ export default function SignupPage() {
             </div>
             <span className="text-3xl font-bold text-slate-900">Marrow</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Create Your Account</h1>
-          <p className="text-slate-600">Start monetizing your LinkedIn network in minutes</p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h1>
+          <p className="text-slate-600">Log in to your account</p>
         </div>
 
         {/* Form Card */}
@@ -153,67 +149,6 @@ export default function SignupPage() {
               )}
             </div>
 
-            {/* Confirm Password */}
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-semibold text-slate-700 mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  disabled={isLoading}
-                  className={`w-full px-4 py-3 rounded-lg border-2 transition-colors pr-12 ${
-                    errors.confirmPassword
-                      ? "border-red-300 focus:border-red-500"
-                      : "border-slate-200 focus:border-blue-500"
-                  } outline-none disabled:opacity-50 disabled:cursor-not-allowed`}
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  disabled={isLoading}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 disabled:opacity-50"
-                >
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.confirmPassword && (
-                <p className="mt-2 text-sm text-red-600">{errors.confirmPassword}</p>
-              )}
-            </div>
-
-            {/* Terms Checkbox */}
-            <div>
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <div className="relative flex items-center justify-center mt-0.5">
-                  <input
-                    type="checkbox"
-                    checked={agreedToTerms}
-                    onChange={(e) => setAgreedToTerms(e.target.checked)}
-                    disabled={isLoading}
-                    className="w-5 h-5 rounded border-2 border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                </div>
-                <span className="text-sm text-slate-600 leading-relaxed">
-                  I agree to the{" "}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-                    Terms of Service
-                  </a>{" "}
-                  and{" "}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-                    Privacy Policy
-                  </a>
-                </span>
-              </label>
-              {errors.terms && (
-                <p className="mt-2 text-sm text-red-600">{errors.terms}</p>
-              )}
-            </div>
-
             {/* Submit Button */}
             <button
               onClick={handleSubmit}
@@ -223,19 +158,19 @@ export default function SignupPage() {
               {isLoading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Creating Account...</span>
+                  <span>Logging in...</span>
                 </>
               ) : (
-                "Create Account"
+                "Log In"
               )}
             </button>
           </div>
 
-          {/* Login Link */}
+          {/* Signup Link */}
           <p className="mt-6 text-center text-sm text-slate-600">
-            Already have an account?{" "}
-            <a href="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
-              Log in
+            New user?{" "}
+            <a href="/signup" className="text-blue-600 hover:text-blue-700 font-semibold">
+              Create Account
             </a>
           </p>
         </div>
