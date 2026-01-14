@@ -282,12 +282,21 @@ export default function Dashboard() {
             <div className="space-y-4">
               <h3 className="font-semibold text-slate-900">What You Offer (3 Benefits)</h3>
               
-              {[1, 2, 3].map((num) => (
-                <div key={num} className="p-4 bg-slate-50 rounded-lg space-y-3">
-                  <input type="text" value={formData[`bullet_title_${num}`]} onChange={(e) => setFormData({ ...formData, [`bullet_title_${num}`]: e.target.value })} disabled={!editing} className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 outline-none transition disabled:bg-white" placeholder={`Benefit ${num} Title`} />
-                  <input type="text" value={formData[`bullet_desc_${num}`]} onChange={(e) => setFormData({ ...formData, [`bullet_desc_${num}`]: e.target.value })} disabled={!editing} className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 outline-none transition disabled:bg-white" placeholder={`Benefit ${num} Description`} />
-                </div>
-              ))}
+              <div className="p-4 bg-slate-50 rounded-lg space-y-3">
+                <input type="text" value={formData.bullet_title_1} onChange={(e) => setFormData({ ...formData, bullet_title_1: e.target.value })} disabled={!editing} className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 outline-none transition disabled:bg-white" placeholder="Benefit 1 Title" />
+                <input type="text" value={formData.bullet_desc_1} onChange={(e) => setFormData({ ...formData, bullet_desc_1: e.target.value })} disabled={!editing} className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 outline-none transition disabled:bg-white" placeholder="Benefit 1 Description" />
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-lg space-y-3">
+                <input type="text" value={formData.bullet_title_2} onChange={(e) => setFormData({ ...formData, bullet_title_2: e.target.value })} disabled={!editing} className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 outline-none transition disabled:bg-white" placeholder="Benefit 2 Title" />
+                <input type="text" value={formData.bullet_desc_2} onChange={(e) => setFormData({ ...formData, bullet_desc_2: e.target.value })} disabled={!editing} className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 outline-none transition disabled:bg-white" placeholder="Benefit 2 Description" />
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-lg space-y-3">
+                <input type="text" value={formData.bullet_title_3} onChange={(e) => setFormData({ ...formData, bullet_title_3: e.target.value })} disabled={!editing} className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 outline-none transition disabled:bg-white" placeholder="Benefit 3 Title" />
+                <input type="text" value={formData.bullet_desc_3} onChange={(e) => setFormData({ ...formData, bullet_desc_3: e.target.value })} disabled={!editing} className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 outline-none transition disabled:bg-white" placeholder="Benefit 3 Description" />
+              </div>
+            </div>
             </div>
 
             {/* Calendly */}
