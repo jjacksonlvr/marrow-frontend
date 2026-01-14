@@ -201,14 +201,14 @@ export default function OnboardingWizard() {
                       value={formData.linkedinUrl}
                       onChange={(e) => updateFormData("linkedinUrl", e.target.value)}
                       className="flex-1 px-4 py-3 rounded-r-lg border-2 border-slate-200 focus:border-blue-500 outline-none transition-colors"
-                      placeholder="jjackson1146"
+                      placeholder="elon-musk"
                     />
                   </div>
                 </div>
                 
                 <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
                   <p className="text-sm text-slate-600">
-                    <span className="font-semibold">Example:</span> linkedin.com/in/jjackson1146
+                    <span className="font-semibold">Example:</span> linkedin.com/in/elon-musk
                   </p>
                 </div>
               </div>
