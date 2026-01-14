@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [copied, setCopied] = useState(false);
+  const [connectingStripe, setConnectingStripe] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -31,6 +32,16 @@ export default function Dashboard() {
   useEffect(() => {
     checkAuth();
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true' && user) {
+      // Refresh profile to get updated Stripe status
+      loadProfile(user.id);
+      // Clean up URL
+      window.history.replaceState({}, '', '/dashboard');
+    }
+  }, [user]);
 
   async function checkAuth() {
     const { data: { user } } = await supabase.auth.getUser();
@@ -107,6 +118,67 @@ export default function Dashboard() {
   async function handleLogout() {
     await supabase.auth.signOut();
     window.location.href = '/';
+  }
+
+  async function connectStripeAccount() {
+    setConnectingStripe(true);
+    
+    try {
+      // Step 1: Create Connect account
+      const createRes = await fetch(
+        'https://mqvuqmysklmkjtarmods.supabase.co/functions/v1/create-connect-account',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdnVxbXlza2xta2p0YXJtb2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgxNzU1MjksImV4cCI6MjA4Mzc1MTUyOX0.f1hm3vdXHLx3m5-Eya6N7v2XuPow3otgtO_Mwr1vMOs',
+          },
+          body: JSON.stringify({
+            email: user.email,
+            user_id: user.id,
+          }),
+        }
+      );
+
+      const createData = await createRes.json();
+      
+      if (!createRes.ok) {
+        throw new Error(createData.error || 'Failed to create account');
+      }
+
+      // Step 2: Save account ID to database
+      await supabase
+        .from('users')
+        .update({ stripe_account_id: createData.account_id })
+        .eq('id', user.id);
+
+      // Step 3: Create account link
+      const linkRes = await fetch(
+        'https://mqvuqmysklmkjtarmods.supabase.co/functions/v1/create-account-link',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdnVxbXlza2xta2p0YXJtb2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgxNzU1MjksImV4cCI6MjA4Mzc1MTUyOX0.f1hm3vdXHLx3m5-Eya6N7v2XuPow3otgtO_Mwr1vMOs',
+          },
+          body: JSON.stringify({
+            account_id: createData.account_id,
+          }),
+        }
+      );
+
+      const linkData = await linkRes.json();
+      
+      if (!linkRes.ok) {
+        throw new Error(linkData.error || 'Failed to create onboarding link');
+      }
+
+      // Redirect to Stripe onboarding
+      window.location.href = linkData.url;
+    } catch (error: any) {
+      alert(error.message || 'Failed to connect Stripe account');
+      setConnectingStripe(false);
+    }
   }
 
   function copyProfileLink() {
@@ -203,6 +275,46 @@ export default function Dashboard() {
             <div className="text-3xl font-bold text-slate-900">${priceDisplay}</div>
           </motion.div>
         </div>
+
+        {/* Stripe Connect Banner */}
+        {!profile.stripe_onboarding_complete && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 text-white">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold mb-2">Connect Your Stripe Account</h3>
+                <p className="text-blue-100 mb-6">To receive payouts, you need to connect your Stripe account. This takes about 2 minutes.</p>
+                <button onClick={connectStripeAccount} disabled={connectingStripe} className="px-8 py-4 bg-white text-blue-600 rounded-xl font-bold hover:bg-blue-50 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                  {connectingStripe ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                      <span>Setting up...</span>
+                    </>
+                  ) : (
+                    <>
+                      <DollarSign className="w-5 h-5" />
+                      <span>Connect Stripe Now</span>
+                    </>
+                  )}
+                </button>
+              </div>
+              <div className="text-6xl opacity-20">💳</div>
+            </div>
+          </motion.div>
+        )}
+
+        {profile.stripe_onboarding_complete && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-6 mb-8 text-white flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                <Check className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="font-bold text-lg">Stripe Connected</div>
+                <div className="text-green-100 text-sm">You're ready to receive payouts</div>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Profile Card */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-white rounded-2xl border border-slate-200 shadow-sm mb-8">
