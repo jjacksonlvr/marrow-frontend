@@ -130,7 +130,7 @@ export default function OnboardingWizard() {
                 <p className="text-lg text-slate-600 mb-8">Let's set up your paid LinkedIn profile. This takes about 3 minutes.</p>
                 <div className="space-y-2 mb-8">
                   <label htmlFor="name" className="block text-sm font-semibold text-slate-700">What's your name?</label>
-                  <input type="text" id="name" value={formData.name} onChange={(e) => updateFormData("name", e.target.value)} className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 outline-none transition-colors text-lg" placeholder="John Smith" />
+                  <input type="text" id="name" value={formData.name} onChange={(e) => updateFormData("name", e.target.value)} className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 outline-none transition-colors text-lg" placeholder="Taylor Swift" />
                 </div>
               </div>
             )}
@@ -143,11 +143,11 @@ export default function OnboardingWizard() {
                   <label htmlFor="linkedinUrl" className="block text-sm font-semibold text-slate-700">LinkedIn Profile URL</label>
                   <div className="flex items-center">
                     <span className="px-4 py-3 bg-slate-100 border-2 border-r-0 border-slate-200 rounded-l-lg text-slate-600">linkedin.com/in/</span>
-                    <input type="text" id="linkedinUrl" value={formData.linkedinUrl} onChange={(e) => updateFormData("linkedinUrl", e.target.value)} className="flex-1 px-4 py-3 rounded-r-lg border-2 border-slate-200 focus:border-blue-500 outline-none transition-colors" placeholder="jjackson1146" />
+                    <input type="text" id="linkedinUrl" value={formData.linkedinUrl} onChange={(e) => updateFormData("linkedinUrl", e.target.value)} className="flex-1 px-4 py-3 rounded-r-lg border-2 border-slate-200 focus:border-blue-500 outline-none transition-colors" placeholder="elonmusk" />
                   </div>
                 </div>
                 <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                  <p className="text-sm text-slate-600"><span className="font-semibold">Example:</span> linkedin.com/in/jjackson1146</p>
+                  <p className="text-sm text-slate-600"><span className="font-semibold">Example:</span> linkedin.com/in/Elon-Musk</p>
                 </div>
               </div>
             )}
