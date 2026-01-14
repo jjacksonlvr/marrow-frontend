@@ -297,7 +297,6 @@ export default function Dashboard() {
                 <input type="text" value={formData.bullet_desc_3} onChange={(e) => setFormData({ ...formData, bullet_desc_3: e.target.value })} disabled={!editing} className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 outline-none transition disabled:bg-white" placeholder="Benefit 3 Description" />
               </div>
             </div>
-            </div>
 
             {/* Calendly */}
             <div>
