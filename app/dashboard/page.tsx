@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Eye, EyeOff, Copy, Check, LogOut, DollarSign, Users, TrendingUp, Edit2, Save, X } from 'lucide-react';
+import { Copy, Check, LogOut, DollarSign, Users, TrendingUp, Edit2, Save, X, Chrome, Download, Calculator } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Dashboard() {
@@ -14,6 +14,9 @@ export default function Dashboard() {
   const [orders, setOrders] = useState<any[]>([]);
   const [copied, setCopied] = useState(false);
   const [connectingStripe, setConnectingStripe] = useState(false);
+  
+  // Revenue calculator state
+  const [calcClients, setCalcClients] = useState(10);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -192,6 +195,12 @@ export default function Dashboard() {
   const totalEarnings = orders.reduce((sum, order) => sum + (order.creator_net_cents || 0), 0) / 100;
   const totalOrders = orders.length;
   const priceDisplay = (formData.price_cents / 100).toFixed(0);
+  
+  // Revenue calculator
+  const userPrice = formData.price_cents / 100;
+  const grossRevenue = userPrice * calcClients * 4; // 4 weeks per month
+  const platformFee = grossRevenue * 0.2;
+  const netRevenue = grossRevenue - platformFee;
 
   if (loading) {
     return (
@@ -243,6 +252,24 @@ export default function Dashboard() {
           <p className="text-lg text-slate-600">Manage your profile and track your earnings</p>
         </div>
 
+        {/* Chrome Extension Banner */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl p-8 mb-8 text-white shadow-xl">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-3">
+                <Chrome className="w-8 h-8" />
+                <h3 className="text-2xl font-bold">Install the Chrome Extension</h3>
+              </div>
+              <p className="text-purple-100 mb-6">Add your booking button to your LinkedIn profile so people can book with you. Takes 30 seconds!</p>
+              <button className="px-8 py-4 bg-white text-purple-600 rounded-xl font-bold hover:bg-purple-50 transition flex items-center gap-2">
+                <Download className="w-5 h-5" />
+                <span>Download Extension</span>
+              </button>
+            </div>
+            <div className="text-6xl opacity-20">💻</div>
+          </div>
+        </motion.div>
+
         {/* Stats */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
@@ -276,9 +303,67 @@ export default function Dashboard() {
           </motion.div>
         </div>
 
+        {/* Revenue Calculator */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-8 mb-8 border-2 border-green-200">
+          <div className="flex items-center gap-3 mb-6">
+            <Calculator className="w-8 h-8 text-green-700" />
+            <h3 className="text-2xl font-bold text-green-900">Your Earning Potential</h3>
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-green-800 mb-3">
+              Clients Per Week
+            </label>
+            <input
+              type="number"
+              value={calcClients}
+              onChange={(e) => setCalcClients(Number(e.target.value))}
+              className="w-full max-w-xs px-4 py-3 rounded-xl border-2 border-green-300 focus:border-green-500 outline-none transition text-xl font-semibold"
+              min="0"
+            />
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white/80 rounded-xl p-6 border border-green-200">
+              <div className="flex items-center gap-2 mb-2">
+                <TrendingUp className="w-5 h-5 text-green-600" />
+                <span className="text-sm font-semibold text-green-800">Gross Revenue/Month</span>
+              </div>
+              <div className="text-4xl font-bold text-green-700">
+                ${grossRevenue.toLocaleString()}
+              </div>
+            </div>
+
+            <div className="bg-white/80 rounded-xl p-6 border border-green-200">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm font-semibold text-slate-700">Platform Fee (20%)</span>
+              </div>
+              <div className="text-4xl font-bold text-slate-700">
+                ${platformFee.toLocaleString()}
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-6 border-2 border-green-500 shadow-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <DollarSign className="w-5 h-5 text-white" />
+                <span className="text-sm font-semibold text-green-100">Your Take-Home</span>
+              </div>
+              <div className="text-4xl font-bold text-white">
+                ${netRevenue.toLocaleString()}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 text-center">
+            <p className="text-green-700 text-lg">
+              Book <span className="font-bold">{calcClients} clients/week</span> and earn <span className="font-bold">${netRevenue.toLocaleString()}/month</span>! 💰
+            </p>
+          </div>
+        </motion.div>
+
         {/* Stripe Connect Banner */}
         {!profile.stripe_onboarding_complete && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 text-white">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 text-white">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <h3 className="text-2xl font-bold mb-2">Connect Your Stripe Account</h3>
@@ -303,7 +388,7 @@ export default function Dashboard() {
         )}
 
         {profile.stripe_onboarding_complete && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-6 mb-8 text-white flex items-center justify-between">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-6 mb-8 text-white flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                 <Check className="w-6 h-6" />
@@ -317,7 +402,7 @@ export default function Dashboard() {
         )}
 
         {/* Profile Card */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-white rounded-2xl border border-slate-200 shadow-sm mb-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-white rounded-2xl border border-slate-200 shadow-sm mb-8">
           <div className="p-6 border-b border-slate-200 flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-slate-900">Your Profile</h2>
@@ -420,7 +505,7 @@ export default function Dashboard() {
 
         {/* Recent Orders */}
         {orders.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-white rounded-2xl border border-slate-200 shadow-sm">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="bg-white rounded-2xl border border-slate-200 shadow-sm">
             <div className="p-6 border-b border-slate-200">
               <h2 className="text-2xl font-bold text-slate-900">Recent Bookings</h2>
             </div>
