@@ -323,40 +323,13 @@ export default function Dashboard() {
             />
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white/80 rounded-xl p-6 border border-green-200">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-                <span className="text-sm font-semibold text-green-800">Gross Revenue/Month</span>
-              </div>
-              <div className="text-4xl font-bold text-green-700">
-                ${grossRevenue.toLocaleString()}
-              </div>
+          <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-2xl p-8 text-center shadow-lg">
+            <div className="text-green-100 text-sm font-semibold mb-3">ESTIMATED MONTHLY EARNINGS</div>
+            <div className="text-6xl font-bold text-white mb-4">
+              ${grossRevenue.toLocaleString()}
             </div>
-
-            <div className="bg-white/80 rounded-xl p-6 border border-green-200">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm font-semibold text-slate-700">Platform Fee (20%)</span>
-              </div>
-              <div className="text-4xl font-bold text-slate-700">
-                ${platformFee.toLocaleString()}
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-6 border-2 border-green-500 shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <DollarSign className="w-5 h-5 text-white" />
-                <span className="text-sm font-semibold text-green-100">Your Take-Home</span>
-              </div>
-              <div className="text-4xl font-bold text-white">
-                ${netRevenue.toLocaleString()}
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 text-center">
-            <p className="text-green-700 text-lg">
-              Book <span className="font-bold">{calcClients} clients/week</span> and earn <span className="font-bold">${netRevenue.toLocaleString()}/month</span>! 💰
+            <p className="text-green-100 text-lg">
+              Book {calcClients} clients per week at ${userPrice}/session
             </p>
           </div>
         </motion.div>

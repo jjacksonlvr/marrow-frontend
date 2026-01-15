@@ -234,45 +234,17 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-white/80 rounded-2xl p-6 border border-green-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-5 h-5 text-green-600" />
-                  <span className="text-sm font-semibold text-green-800">Gross Revenue/Month</span>
-                </div>
-                <div className="text-4xl font-bold text-green-700">
-                  ${grossRevenue.toLocaleString()}
-                </div>
+            <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-3xl p-12 text-center shadow-2xl">
+              <div className="text-green-100 text-sm font-semibold mb-3">MONTHLY EARNINGS</div>
+              <div className="text-7xl font-bold text-white mb-4">
+                ${grossRevenue.toLocaleString()}
               </div>
-
-              <div className="bg-white/80 rounded-2xl p-6 border border-green-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <Shield className="w-5 h-5 text-slate-600" />
-                  <span className="text-sm font-semibold text-slate-700">Platform Fee (20%)</span>
-                </div>
-                <div className="text-4xl font-bold text-slate-700">
-                  ${platformFee.toLocaleString()}
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-2xl p-6 border-2 border-green-500 shadow-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <DollarSign className="w-5 h-5 text-white" />
-                  <span className="text-sm font-semibold text-green-100">Your Take-Home</span>
-                </div>
-                <div className="text-4xl font-bold text-white">
-                  ${netRevenue.toLocaleString()}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 text-center">
-              <p className="text-green-700 text-lg mb-4">
-                That's <span className="font-bold">${netRevenue.toLocaleString()}</span> per month in your pocket! 💰
+              <p className="text-green-100 text-xl mb-8">
+                Book {calcClients} clients per week at ${calcPrice}/session
               </p>
               <button
                 onClick={handleGetStarted}
-                className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-lg transition-all shadow-xl hover:scale-105"
+                className="px-8 py-4 bg-white text-green-600 rounded-xl font-bold text-lg transition-all shadow-xl hover:scale-105"
               >
                 Start Earning Now
               </button>
