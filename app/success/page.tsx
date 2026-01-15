@@ -374,13 +374,6 @@ export default function SuccessPage() {
           transition={{ delay: 1.0 }}
           className="mb-16"
         >
-        {/* Social Proof Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0 }}
-          className="mb-16"
-        >
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-4">
             Join thousands of successful professionals
           </h2>
