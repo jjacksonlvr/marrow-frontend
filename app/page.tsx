@@ -62,27 +62,27 @@ export default function LandingPage() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <a href="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">M</span>
             </div>
             <span className="text-2xl font-bold text-slate-900">Marrow</span>
-          </div>
+          </a>
           
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
+            <a href="/how-it-works" className="text-slate-600 hover:text-slate-900 font-medium transition-colors cursor-pointer">
               How It Works
             </a>
-            <a href="#pricing" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
+            <a href="#pricing" className="text-slate-600 hover:text-slate-900 font-medium transition-colors cursor-pointer">
               Pricing
             </a>
-            <a href="#faq" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
+            <a href="/faq" className="text-slate-600 hover:text-slate-900 font-medium transition-colors cursor-pointer">
               FAQ
             </a>
             {isLoggedIn ? (
               <button
                 onClick={handleDashboard}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all"
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all cursor-pointer"
               >
                 Go to Dashboard
               </button>
@@ -90,13 +90,13 @@ export default function LandingPage() {
               <>
                 <button
                   onClick={handleLogin}
-                  className="text-slate-600 hover:text-slate-900 font-medium transition-colors"
+                  className="text-slate-600 hover:text-slate-900 font-medium transition-colors cursor-pointer"
                 >
                   Login
                 </button>
                 <button
                   onClick={handleGetStarted}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all"
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all cursor-pointer"
                 >
                   Start Earning
                 </button>
@@ -125,13 +125,16 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={handleGetStarted}
-                  className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-lg transition-all shadow-xl shadow-blue-600/30 hover:shadow-2xl hover:shadow-blue-600/40 hover:scale-105"
+                  className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-lg transition-all shadow-xl shadow-blue-600/30 hover:shadow-2xl hover:shadow-blue-600/40 hover:scale-105 cursor-pointer"
                 >
                   Start Earning Today
                 </button>
-                <button className="px-8 py-4 border-2 border-slate-300 hover:border-slate-400 text-slate-700 rounded-xl font-semibold text-lg transition-all hover:bg-slate-50">
+                <a
+                  href="/how-it-works"
+                  className="px-8 py-4 border-2 border-slate-300 hover:border-slate-400 text-slate-700 rounded-xl font-semibold text-lg transition-all hover:bg-slate-50 cursor-pointer text-center"
+                >
                   See How It Works
-                </button>
+                </a>
               </div>
               
               {/* Trust Bar */}
@@ -169,7 +172,7 @@ export default function LandingPage() {
                 <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white">
                   <div className="text-3xl font-bold mb-2">$200 to Connect</div>
                   <p className="text-blue-100 mb-4">30-min product strategy consultation</p>
-                  <button className="w-full bg-white text-blue-600 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+                  <button className="w-full bg-white text-blue-600 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors cursor-pointer">
                     Book Time With Sarah
                   </button>
                 </div>
@@ -179,335 +182,321 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Social Proof Ticker */}
-      <div className="bg-blue-600 py-4 overflow-hidden">
-        <div className="flex items-center gap-12 whitespace-nowrap">
-          <span className="text-blue-100 font-medium">💰 Sarah earned $4,200 last month</span>
-          <span className="text-blue-100 font-medium">👥 1,000+ professionals monetizing</span>
-          <span className="text-blue-100 font-medium">📈 Average booking: $150</span>
-          <span className="text-blue-100 font-medium">💰 Sarah earned $4,200 last month</span>
-          <span className="text-blue-100 font-medium">👥 1,000+ professionals monetizing</span>
-        </div>
-      </div>
-
-      {/* Revenue Calculator Section */}
+      {/* Revenue Calculator */}
       <section className="py-24 px-6 bg-white">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-slate-900 mb-4">
-              Calculate Your Earning Potential
+              Calculate Your Potential Earnings
             </h2>
             <p className="text-xl text-slate-600">
-              See how much you could earn by monetizing your expertise
+              See how much you could earn by monetizing your LinkedIn network
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-8 md:p-12 border-2 border-green-200 shadow-xl">
+          <div className="bg-gradient-to-br from-blue-50 to-white rounded-3xl p-8 md:p-12 border-2 border-blue-100 shadow-xl">
             <div className="grid md:grid-cols-2 gap-8 mb-8">
               <div>
-                <label className="block text-sm font-semibold text-green-800 mb-3">
+                <label className="block text-sm font-semibold text-slate-700 mb-3">
                   Your Price Per Session
                 </label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">$</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-lg">
+                    $
+                  </span>
                   <input
                     type="number"
                     value={calcPrice}
                     onChange={(e) => setCalcPrice(Number(e.target.value))}
-                    className="w-full pl-10 pr-4 py-4 rounded-xl border-2 border-green-300 focus:border-green-500 outline-none transition text-xl font-semibold"
-                    min="0"
+                    className="w-full pl-8 pr-4 py-4 text-2xl font-bold border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-green-800 mb-3">
+                <label className="block text-sm font-semibold text-slate-700 mb-3">
                   Clients Per Week
                 </label>
                 <input
                   type="number"
                   value={calcClients}
                   onChange={(e) => setCalcClients(Number(e.target.value))}
-                  className="w-full px-4 py-4 rounded-xl border-2 border-green-300 focus:border-green-500 outline-none transition text-xl font-semibold"
-                  min="0"
+                  className="w-full px-4 py-4 text-2xl font-bold border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                 />
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-3xl p-12 text-center shadow-2xl">
-              <div className="text-green-100 text-sm font-semibold mb-3">MONTHLY EARNINGS</div>
-              <div className="text-7xl font-bold text-white mb-4">
-                ${grossRevenue.toLocaleString()}
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 text-white text-center">
+              <div className="text-sm uppercase tracking-wide mb-2 text-blue-100">
+                Your Monthly Earnings
               </div>
-              <p className="text-green-100 text-xl mb-8">
-                Book {calcClients} clients per week at ${calcPrice}/session
-              </p>
-              <button
-                onClick={handleGetStarted}
-                className="px-8 py-4 bg-white text-green-600 rounded-xl font-bold text-lg transition-all shadow-xl hover:scale-105"
-              >
-                Start Earning Now
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Value Proposition Section */}
-      <section className="py-24 px-6 bg-slate-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-4xl font-bold text-slate-900 mb-6">
-              Your Network Is Your Net Worth. Now Prove It.
-            </h2>
-            <p className="text-xl text-slate-600 leading-relaxed">
-              You've worked your entire career to build relationships, expertise, and credibility at top companies. 
-              Your network is valuable - people want introductions, advice, and access to your connections. 
-              With Marrow, you finally get compensated for what you've built.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl p-8 border border-slate-200 hover:shadow-xl transition-all duration-300">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                <Clock className="w-6 h-6 text-blue-600" />
+              <div className="text-6xl font-bold mb-2">
+                ${netRevenue.toLocaleString()}
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Control Your Time</h3>
-              <p className="text-slate-600 leading-relaxed">
-                Set your price, choose who you connect with, work on your schedule
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl p-8 border border-slate-200 hover:shadow-xl transition-all duration-300">
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
-                <DollarSign className="w-6 h-6 text-green-600" />
+              <div className="text-blue-100 text-sm">
+                After platform fee ({calcClients * 4} sessions/month)
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Earn From Expertise</h3>
-              <p className="text-slate-600 leading-relaxed">
-                Get paid for intros, consulting, career advice, and connections
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl p-8 border border-slate-200 hover:shadow-xl transition-all duration-300">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                <Target className="w-6 h-6 text-purple-600" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Quality Over Quantity</h3>
-              <p className="text-slate-600 leading-relaxed">
-                Paid barriers mean serious requests only, no more spam
-              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-24 px-6 bg-white">
-        <div className="max-w-7xl mx-auto">
+      <section id="how-it-works" className="py-24 px-6 bg-slate-50">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-900 mb-4">
-              Start Earning in Minutes
+              How It Works
             </h2>
+            <p className="text-xl text-slate-600">
+              Start earning from your network in 3 simple steps
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="relative">
-              <div className="bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mb-6 shadow-lg shadow-blue-500/30">
-                  1
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: Briefcase,
+                step: "1",
+                title: "Set Your Price",
+                description: "Choose how much you want to charge for a 30-minute consultation based on your expertise."
+              },
+              {
+                icon: Chrome,
+                step: "2",
+                title: "Install Extension",
+                description: "Add our Chrome extension to display a booking button on your LinkedIn profile."
+              },
+              {
+                icon: DollarSign,
+                step: "3",
+                title: "Get Paid",
+                description: "When someone books time with you, you receive 80% of the fee directly to your bank."
+              }
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white rounded-2xl p-8 shadow-xl border border-slate-200 relative"
+              >
+                <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                  {item.step}
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-4">Set Your Price</h3>
-                <p className="text-slate-600 mb-6 leading-relaxed">
-                  Create your profile, set your connection fee, add your Calendly link
-                </p>
-                <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                  <div className="text-sm text-slate-500 mb-2">Connection Fee</div>
-                  <div className="text-3xl font-bold text-slate-900">$300</div>
-                </div>
-              </div>
-              <div className="hidden md:block absolute top-1/2 -right-6 transform -translate-y-1/2">
-                <ArrowRight className="w-12 h-12 text-slate-300" />
-              </div>
-            </div>
+                <item.icon className="w-12 h-12 text-blue-600 mb-4" />
+                <h3 className="text-2xl font-bold text-slate-900 mb-3">{item.title}</h3>
+                <p className="text-slate-600 leading-relaxed">{item.description}</p>
+              </motion.div>
+            ))}
+          </div>
 
-            <div className="relative">
-              <div className="bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mb-6 shadow-lg shadow-blue-500/30">
-                  2
-                </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-4">Install Extension</h3>
-                <p className="text-slate-600 mb-6 leading-relaxed">
-                  Add our Chrome extension. It adds a booking button to your LinkedIn profile
-                </p>
-                <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 flex items-center justify-center">
-                  <Chrome className="w-12 h-12 text-blue-600" />
-                </div>
-              </div>
-              <div className="hidden md:block absolute top-1/2 -right-6 transform -translate-y-1/2">
-                <ArrowRight className="w-12 h-12 text-slate-300" />
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mb-6 shadow-lg shadow-green-500/30">
-                  3
-                </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-4">Get Paid</h3>
-                <p className="text-slate-600 mb-6 leading-relaxed">
-                  When someone pays to connect, they book time on your calendar
-                </p>
-                <div className="bg-green-50 rounded-xl p-4 border border-green-200">
-                  <div className="text-xs text-green-600 mb-3 font-semibold">YOUR CALENDAR</div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-xs">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                      <span className="text-slate-700">Mon 2PM - $300 session</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                      <span className="text-slate-700">Wed 10AM - $300 session</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                      <span className="text-slate-700">Thu 3PM - $300 session</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                      <span className="text-slate-700">Fri 11AM - $300 session</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="text-center mt-12">
+            <a
+              href="/how-it-works"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-lg transition-all shadow-xl shadow-blue-600/30 hover:shadow-2xl hover:shadow-blue-600/40 cursor-pointer"
+            >
+              View Full Guide
+              <ArrowRight className="w-5 h-5" />
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Target Audience */}
-      <section className="py-24 px-6 bg-slate-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">
-              Built For Professionals Who Get Results
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-8 border border-blue-100">
-              <Rocket className="w-10 h-10 text-blue-600 mb-4" />
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Startup Founders</h3>
-              <p className="text-slate-600 text-sm">
-                Monetize fundraising intros and investor connections
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-purple-50 to-white rounded-2xl p-8 border border-purple-100">
-              <Briefcase className="w-10 h-10 text-purple-600 mb-4" />
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Executives</h3>
-              <p className="text-slate-600 text-sm">
-                Get paid for career advice and industry insights
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-50 to-white rounded-2xl p-8 border border-green-100">
-              <Target className="w-10 h-10 text-green-600 mb-4" />
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Consultants</h3>
-              <p className="text-slate-600 text-sm">
-                Turn LinkedIn into a lead generation machine
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-orange-50 to-white rounded-2xl p-8 border border-orange-100">
-              <Award className="w-10 h-10 text-orange-600 mb-4" />
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Subject Matter Experts</h3>
-              <p className="text-slate-600 text-sm">
-                Charge for your specialized knowledge
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Calendly Integration */}
+      {/* Features */}
       <section className="py-24 px-6 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
-            <div className="grid md:grid-cols-2">
-              <div className="p-12">
-                <Calendar className="w-12 h-12 text-blue-600 mb-6" />
-                <h2 className="text-3xl font-bold text-slate-900 mb-4">
-                  Seamless Scheduling With Calendly
-                </h2>
-                <p className="text-slate-600 leading-relaxed">
-                  After payment, clients book directly on your Calendly. No back-and-forth, 
-                  no double booking, all meetings automatically confirmed.
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Everything You Need to Monetize Your Network
+            </h2>
+            <p className="text-xl text-slate-600">
+              Professional tools designed to help you earn more
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: Target,
+                title: "Set Your Own Price",
+                description: "You're in control. Charge what you're worth based on your expertise and demand."
+              },
+              {
+                icon: Shield,
+                title: "Secure Payments",
+                description: "All payments processed through Stripe. Bank-level security for your transactions."
+              },
+              {
+                icon: Calendar,
+                title: "Calendly Integration",
+                description: "Seamlessly connect your calendar. Let clients book time that works for both of you."
+              },
+              {
+                icon: Clock,
+                title: "Save Time",
+                description: "No more back-and-forth emails. Automated booking and payment in one click."
+              },
+              {
+                icon: Award,
+                title: "Keep 80%",
+                description: "You earn 80% of every booking. Automatic payouts to your bank account."
+              },
+              {
+                icon: Rocket,
+                title: "Easy Setup",
+                description: "Get started in under 10 minutes. No technical knowledge required."
+              }
+            ].map((feature, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-slate-50 rounded-xl p-6 hover:shadow-lg transition-shadow"
+              >
+                <feature.icon className="w-10 h-10 text-blue-600 mb-4" />
+                <h3 className="text-xl font-bold text-slate-900 mb-2">{feature.title}</h3>
+                <p className="text-slate-600">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Preview */}
+      <section id="faq" className="py-24 px-6 bg-slate-50">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xl text-slate-600">
+              Common questions about monetizing your LinkedIn profile
+            </p>
+          </div>
+
+          <div className="space-y-4 mb-8">
+            {[
+              {
+                q: "How does Marrow work?",
+                a: "Marrow adds a booking button to your LinkedIn profile. When someone wants to connect, they pay your fee and receive a Calendly link to schedule time with you."
+              },
+              {
+                q: "How much can I charge?",
+                a: "You set your own price! Most users charge between $50-$500 per 30-minute session depending on their expertise and demand."
+              },
+              {
+                q: "When do I get paid?",
+                a: "You receive 80% of each booking fee. Payments are processed through Stripe and deposited directly into your bank account within 2-7 business days."
+              }
+            ].map((faq, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="bg-white rounded-xl p-6 border border-slate-200"
+              >
+                <h3 className="font-semibold text-slate-900 text-lg mb-2">{faq.q}</h3>
+                <p className="text-slate-600">{faq.a}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <a
+              href="/faq"
+              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold cursor-pointer"
+            >
+              View All Questions
+              <ArrowRight className="w-5 h-5" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Calendly FAQ */}
+      <section className="py-24 px-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-blue-50 rounded-3xl p-8 md:p-12 border-2 border-blue-100">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                  Do I need Calendly?
+                </h3>
+                <p className="text-slate-600">
+                  Yes, you'll need a free Calendly account to manage your bookings.
                 </p>
               </div>
-              
-              <div className="bg-slate-50 p-12 border-l border-slate-200">
-                <button
-                  onClick={() => setCalendlyExpanded(!calendlyExpanded)}
-                  className="flex items-center justify-between w-full text-left group md:cursor-default"
-                >
-                  <span className="font-semibold text-slate-900">Don't have Calendly? No problem.</span>
-                  <ChevronDown
-                    className={`w-5 h-5 text-slate-400 transition-transform md:hidden ${
-                      calendlyExpanded ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                
-                {calendlyExpanded && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    className="mt-6 space-y-4"
-                  >
-                    <p className="text-slate-600 text-sm">
-                      We'll walk you through setting up a free Calendly account in under 5 minutes.
-                    </p>
-                    <ol className="space-y-3 text-sm text-slate-600">
-                      <li className="flex items-start gap-3">
-                        <span className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xs">
-                          1
-                        </span>
-                        <span>Go to calendly.com and sign up (free)</span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <span className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xs">
-                          2
-                        </span>
-                        <span>Connect your calendar (Google/Outlook)</span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <span className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xs">
-                          3
-                        </span>
-                        <span>Create a 30-minute event type</span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <span className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xs">
-                          4
-                        </span>
-                        <span>Copy your Calendly link</span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <span className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xs">
-                          5
-                        </span>
-                        <span>Paste it in Marrow during setup</span>
-                      </li>
-                    </ol>
-                    <div className="pt-2">
-                      <a href="#" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                        Watch our 5-minute setup video →
-                      </a>
-                    </div>
-                  </motion.div>
-                )}
-              </div>
             </div>
+
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex-1">
+                <p className="text-slate-700 font-medium">
+                  Don't worry - it's free and takes 5 minutes to set up
+                </p>
+              </div>
+              <button
+                onClick={() => setCalendlyExpanded(!calendlyExpanded)}
+                className="ml-4 p-2 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer"
+              >
+                <ChevronDown 
+                  className={`w-6 h-6 text-blue-600 transition-transform ${
+                    calendlyExpanded ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+            </div>
+            
+            {calendlyExpanded && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="mt-6 space-y-4"
+              >
+                <p className="text-slate-600 text-sm">
+                  We'll walk you through setting up a free Calendly account in under 5 minutes.
+                </p>
+                <ol className="space-y-3 text-sm text-slate-600">
+                  <li className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xs">
+                      1
+                    </span>
+                    <span>Go to calendly.com and sign up (free)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xs">
+                      2
+                    </span>
+                    <span>Connect your calendar (Google/Outlook)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xs">
+                      3
+                    </span>
+                    <span>Create a 30-minute event type</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xs">
+                      4
+                    </span>
+                    <span>Copy your Calendly link</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xs">
+                      5
+                    </span>
+                    <span>Paste it in Marrow during setup</span>
+                  </li>
+                </ol>
+              </motion.div>
+            )}
           </div>
         </div>
       </section>
@@ -562,7 +551,7 @@ export default function LandingPage() {
           </p>
           <button
             onClick={handleGetStarted}
-            className="px-12 py-5 bg-white text-blue-600 rounded-xl font-bold text-xl hover:bg-blue-50 transition-all shadow-2xl hover:scale-105"
+            className="px-12 py-5 bg-white text-blue-600 rounded-xl font-bold text-xl hover:bg-blue-50 transition-all shadow-2xl hover:scale-105 cursor-pointer"
           >
             Get Started - It's Free
           </button>
@@ -591,28 +580,26 @@ export default function LandingPage() {
             <div>
               <h4 className="font-semibold text-white mb-4">Product</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a></li>
-                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Chrome Extension</a></li>
+                <li><a href="/how-it-works" className="hover:text-white transition-colors cursor-pointer">How It Works</a></li>
+                <li><a href="#pricing" className="hover:text-white transition-colors cursor-pointer">Pricing</a></li>
+                <li><a href="/dashboard" className="hover:text-white transition-colors cursor-pointer">Dashboard</a></li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold text-white mb-4">Resources</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Support</a></li>
+                <li><a href="/faq" className="hover:text-white transition-colors cursor-pointer">FAQ</a></li>
+                <li><a href="/about" className="hover:text-white transition-colors cursor-pointer">About</a></li>
+                <li><a href="/contact" className="hover:text-white transition-colors cursor-pointer">Contact</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold text-white mb-4">Company</h4>
+              <h4 className="font-semibold text-white mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacy</a></li>
+                <li><a href="/terms" className="hover:text-white transition-colors cursor-pointer">Terms of Service</a></li>
+                <li><a href="/privacy" className="hover:text-white transition-colors cursor-pointer">Privacy Policy</a></li>
               </ul>
             </div>
           </div>
@@ -620,10 +607,10 @@ export default function LandingPage() {
           <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-slate-400">© 2026 Marrow. All rights reserved.</p>
             <div className="flex items-center gap-4">
-              <a href="#" className="text-slate-400 hover:text-white transition-colors">
+              <a href="#" className="text-slate-400 hover:text-white transition-colors cursor-pointer">
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors">
+              <a href="#" className="text-slate-400 hover:text-white transition-colors cursor-pointer">
                 <Twitter className="w-5 h-5" />
               </a>
             </div>
