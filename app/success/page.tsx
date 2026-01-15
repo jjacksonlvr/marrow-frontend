@@ -235,73 +235,32 @@ export default function SuccessPage() {
             </div>
           </motion.div>
 
-          {/* Booking Summary */}
-          {amount > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="max-w-2xl mx-auto mb-8"
-            >
-              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-slate-600">
-                    Session with {creatorName || 'your creator'}
-                  </span>
-                  <span className="font-semibold text-slate-900 text-xl">
-                    ${(amount / 100).toFixed(2)}
-                  </span>
-                </div>
-                <div className="text-sm text-slate-500">30-minute consultation</div>
+          {/* Booking Summary - Always Show */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="max-w-2xl mx-auto mb-8"
+          >
+            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-slate-600">
+                  Session with {creatorName || 'your creator'}
+                </span>
+                <span className="font-semibold text-slate-900 text-xl">
+                  {amount > 0 ? `$${(amount / 100).toFixed(2)}` : 'Paid'}
+                </span>
               </div>
-            </motion.div>
-          )}
+              <div className="text-sm text-slate-500">30-minute consultation</div>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Calendly Embed */}
+        {/* Next Steps Timeline - MOVED UP */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="mb-16"
-        >
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
-            <div 
-              className="calendly-inline-widget" 
-              data-url={bookingUrl}
-              style={{ minWidth: '320px', height: '700px' }}
-            />
-          </div>
-        </motion.div>
-
-        {/* Didn't Receive Email */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="max-w-2xl mx-auto mb-16"
-        >
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-            <p className="text-sm text-blue-900 font-medium mb-1">
-              Didn't receive the email?
-            </p>
-            <p className="text-sm text-blue-700">
-              Check your spam folder or contact us at{' '}
-              <a 
-                href="mailto:support@marrow.ideatoads.com" 
-                className="underline hover:text-blue-800 cursor-pointer"
-              >
-                support@marrow.ideatoads.com
-              </a>
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Next Steps Timeline */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
           className="mb-16"
         >
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-12">
@@ -324,7 +283,7 @@ export default function SuccessPage() {
                   Pick Your Time
                 </h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Choose a time that works best for you from the calendar above
+                  Choose a time that works best for you from the calendar below
                 </p>
               </div>
             </div>
@@ -369,6 +328,52 @@ export default function SuccessPage() {
           </div>
         </motion.div>
 
+        {/* Didn't Receive Email */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="max-w-2xl mx-auto mb-16"
+        >
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <p className="text-sm text-blue-900 font-medium mb-1">
+              Didn't receive the email?
+            </p>
+            <p className="text-sm text-blue-700">
+              Check your spam folder or contact us at{' '}
+              <a 
+                href="mailto:support@marrow.ideatoads.com" 
+                className="underline hover:text-blue-800 cursor-pointer"
+              >
+                support@marrow.ideatoads.com
+              </a>
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Calendly Embed */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+          className="mb-16"
+        >
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+            <div 
+              className="calendly-inline-widget" 
+              data-url={bookingUrl}
+              style={{ minWidth: '320px', height: '700px' }}
+            />
+          </div>
+        </motion.div>
+
+        {/* Social Proof Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0 }}
+          className="mb-16"
+        >
         {/* Social Proof Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
