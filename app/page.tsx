@@ -13,17 +13,48 @@ import {
   ChevronDown,
   Linkedin,
   Twitter,
-  ArrowRight
+  ArrowRight,
+  TrendingUp
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function LandingPage() {
   const [calendlyExpanded, setCalendlyExpanded] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  // Revenue calculator state
+  const [calcPrice, setCalcPrice] = useState(200);
+  const [calcClients, setCalcClients] = useState(10);
+  
+  const grossRevenue = calcPrice * calcClients * 4; // 4 weeks per month
+  const platformFee = grossRevenue * 0.2;
+  const netRevenue = grossRevenue - platformFee;
+
+  useEffect(() => {
+    checkAuth();
+    // Expand Calendly on desktop only
+    if (window.innerWidth >= 768) {
+      setCalendlyExpanded(true);
+    }
+  }, []);
+
+  async function checkAuth() {
+    const { data: { user } } = await supabase.auth.getUser();
+    setIsLoggedIn(!!user);
+  }
 
   const handleGetStarted = () => {
-    // Navigate to signup page
     window.location.href = '/signup';
+  };
+
+  const handleDashboard = () => {
+    window.location.href = '/dashboard';
+  };
+
+  const handleLogin = () => {
+    window.location.href = '/login';
   };
 
   return (
@@ -48,12 +79,29 @@ export default function LandingPage() {
             <a href="#faq" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
               FAQ
             </a>
-            <button
-              onClick={handleGetStarted}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all"
-            >
-              Start Earning
-            </button>
+            {isLoggedIn ? (
+              <button
+                onClick={handleDashboard}
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all"
+              >
+                Go to Dashboard
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={handleLogin}
+                  className="text-slate-600 hover:text-slate-900 font-medium transition-colors"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={handleGetStarted}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all"
+                >
+                  Start Earning
+                </button>
+              </>
+            )}
           </nav>
         </div>
       </header>
@@ -142,8 +190,99 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Value Proposition Section */}
+      {/* Revenue Calculator Section */}
       <section className="py-24 px-6 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Calculate Your Earning Potential
+            </h2>
+            <p className="text-xl text-slate-600">
+              See how much you could earn by monetizing your expertise
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-8 md:p-12 border-2 border-green-200 shadow-xl">
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <label className="block text-sm font-semibold text-green-800 mb-3">
+                  Your Price Per Session
+                </label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">$</span>
+                  <input
+                    type="number"
+                    value={calcPrice}
+                    onChange={(e) => setCalcPrice(Number(e.target.value))}
+                    className="w-full pl-10 pr-4 py-4 rounded-xl border-2 border-green-300 focus:border-green-500 outline-none transition text-xl font-semibold"
+                    min="0"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-green-800 mb-3">
+                  Clients Per Week
+                </label>
+                <input
+                  type="number"
+                  value={calcClients}
+                  onChange={(e) => setCalcClients(Number(e.target.value))}
+                  className="w-full px-4 py-4 rounded-xl border-2 border-green-300 focus:border-green-500 outline-none transition text-xl font-semibold"
+                  min="0"
+                />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="bg-white/80 rounded-2xl p-6 border border-green-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrendingUp className="w-5 h-5 text-green-600" />
+                  <span className="text-sm font-semibold text-green-800">Gross Revenue/Month</span>
+                </div>
+                <div className="text-4xl font-bold text-green-700">
+                  ${grossRevenue.toLocaleString()}
+                </div>
+              </div>
+
+              <div className="bg-white/80 rounded-2xl p-6 border border-green-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Shield className="w-5 h-5 text-slate-600" />
+                  <span className="text-sm font-semibold text-slate-700">Platform Fee (20%)</span>
+                </div>
+                <div className="text-4xl font-bold text-slate-700">
+                  ${platformFee.toLocaleString()}
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-2xl p-6 border-2 border-green-500 shadow-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <DollarSign className="w-5 h-5 text-white" />
+                  <span className="text-sm font-semibold text-green-100">Your Take-Home</span>
+                </div>
+                <div className="text-4xl font-bold text-white">
+                  ${netRevenue.toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 text-center">
+              <p className="text-green-700 text-lg mb-4">
+                That's <span className="font-bold">${netRevenue.toLocaleString()}</span> per month in your pocket! 💰
+              </p>
+              <button
+                onClick={handleGetStarted}
+                className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-lg transition-all shadow-xl hover:scale-105"
+              >
+                Start Earning Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Value Proposition Section */}
+      <section className="py-24 px-6 bg-slate-50">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-900 mb-6">
@@ -157,7 +296,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-8 border border-slate-200 hover:shadow-xl transition-all duration-300">
+            <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl p-8 border border-slate-200 hover:shadow-xl transition-all duration-300">
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
                 <Clock className="w-6 h-6 text-blue-600" />
               </div>
@@ -167,7 +306,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-8 border border-slate-200 hover:shadow-xl transition-all duration-300">
+            <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl p-8 border border-slate-200 hover:shadow-xl transition-all duration-300">
               <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
                 <DollarSign className="w-6 h-6 text-green-600" />
               </div>
@@ -177,7 +316,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-8 border border-slate-200 hover:shadow-xl transition-all duration-300">
+            <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl p-8 border border-slate-200 hover:shadow-xl transition-all duration-300">
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
                 <Target className="w-6 h-6 text-purple-600" />
               </div>
@@ -191,7 +330,7 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-24 px-6 bg-slate-50">
+      <section id="how-it-works" className="py-24 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-900 mb-4">
@@ -274,7 +413,7 @@ export default function LandingPage() {
       </section>
 
       {/* Target Audience */}
-      <section className="py-24 px-6 bg-white">
+      <section className="py-24 px-6 bg-slate-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-900 mb-4">
@@ -319,7 +458,7 @@ export default function LandingPage() {
       </section>
 
       {/* Calendly Integration */}
-      <section className="py-24 px-6 bg-slate-50">
+      <section className="py-24 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
             <div className="grid md:grid-cols-2">
@@ -337,11 +476,11 @@ export default function LandingPage() {
               <div className="bg-slate-50 p-12 border-l border-slate-200">
                 <button
                   onClick={() => setCalendlyExpanded(!calendlyExpanded)}
-                  className="flex items-center justify-between w-full text-left group"
+                  className="flex items-center justify-between w-full text-left group md:cursor-default"
                 >
                   <span className="font-semibold text-slate-900">Don't have Calendly? No problem.</span>
                   <ChevronDown
-                    className={`w-5 h-5 text-slate-400 transition-transform ${
+                    className={`w-5 h-5 text-slate-400 transition-transform md:hidden ${
                       calendlyExpanded ? "rotate-180" : ""
                     }`}
                   />
@@ -402,13 +541,13 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="py-24 px-6 bg-white">
+      <section id="pricing" className="py-24 px-6 bg-slate-50">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-slate-900 mb-4">
             You Set Your Own Price
           </h2>
           
-          <div className="mt-12 bg-gradient-to-br from-slate-50 to-white rounded-3xl p-12 border-2 border-slate-200 shadow-xl">
+          <div className="mt-12 bg-gradient-to-br from-white to-slate-50 rounded-3xl p-12 border-2 border-slate-200 shadow-xl">
             <div className="text-5xl font-bold text-slate-900 mb-4">
               Your Expertise. Your Network. Your Price.
             </div>

@@ -100,6 +100,10 @@ export default function OnboardingWizard() {
     }
   };
 
+  const goToDashboard = () => {
+    window.location.href = '/dashboard';
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-2xl">
@@ -259,7 +263,7 @@ export default function OnboardingWizard() {
                   <p className="text-sm text-slate-500">This adds your booking button to your LinkedIn profile</p>
                 </div>
                 
-                <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 text-left">
+                <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 text-left mb-8">
                   <p className="font-semibold text-slate-900 mb-4">What happens next:</p>
                   <ol className="space-y-3 text-slate-600">
                     <li className="flex items-start gap-3">
@@ -280,11 +284,18 @@ export default function OnboardingWizard() {
                     </li>
                   </ol>
                 </div>
+
+                <button
+                  onClick={goToDashboard}
+                  className="w-full px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-lg transition-all shadow-lg"
+                >
+                  Go to Dashboard
+                </button>
               </div>
             )}
 
             <div className="flex items-center justify-between mt-10 pt-8 border-t border-slate-200">
-              <button onClick={prevStep} disabled={currentStep === 1 || isLoading} className={`px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 ${currentStep === 1 || isLoading ? "text-slate-300 cursor-not-allowed" : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"}`}>
+              <button onClick={prevStep} disabled={currentStep === 1 || isLoading || currentStep === 6} className={`px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 ${currentStep === 1 || isLoading || currentStep === 6 ? "text-slate-300 cursor-not-allowed" : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"}`}>
                 <ChevronLeft className="w-5 h-5" />
                 Back
               </button>
