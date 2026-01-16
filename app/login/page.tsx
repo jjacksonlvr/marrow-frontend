@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
+import { useToast } from "@/lib/toast-context";
+import { getUserFriendlyError, logError } from "@/lib/error-handling";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,6 +13,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const toast = useToast();
 
   const handleSubmit = async () => {
     const newErrors: Record<string, string> = {};
@@ -27,40 +30,52 @@ export default function LoginPage() {
     
     setErrors(newErrors);
     
-    if (Object.keys(newErrors).length === 0) {
-      setIsLoading(true);
-      
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+    if (Object.keys(newErrors).length > 0) {
+      toast.error('Invalid input', 'Please check your email and password');
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        if (error) {
-          setErrors({ general: error.message });
-          setIsLoading(false);
-          return;
-        }
+      if (error) {
+        logError(error, 'Login');
+        const friendlyError = getUserFriendlyError(error);
+        toast.error('Login failed', friendlyError);
+        setIsLoading(false);
+        return;
+      }
 
-        // Check if user has completed onboarding
-        const { data: userData } = await supabase
-          .from('users')
-          .select('linkedin_slug')
-          .eq('id', data.user.id)
-          .single();
+      // Success toast
+      toast.success('Welcome back!', 'Redirecting to your dashboard...');
 
+      // Check if user has completed onboarding
+      const { data: userData } = await supabase
+        .from('users')
+        .select('linkedin_slug')
+        .eq('id', data.user.id)
+        .single();
+
+      setTimeout(() => {
         if (userData && userData.linkedin_slug) {
-          // User has completed onboarding - go to dashboard (or home for now)
-          window.location.href = '/';
+          // User has completed onboarding - go to dashboard
+          window.location.href = '/dashboard';
         } else {
           // User hasn't completed onboarding
           window.location.href = '/onboard';
         }
-      } catch (error) {
-        console.error('Login error:', error);
-        setErrors({ general: 'An unexpected error occurred. Please try again.' });
-        setIsLoading(false);
-      }
+      }, 500);
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      logError(error, 'Login');
+      toast.error('Login failed', 'An unexpected error occurred. Please try again.');
+      setIsLoading(false);
     }
   };
 
@@ -85,13 +100,6 @@ export default function LoginPage() {
 
         {/* Form Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
-          {/* General Error */}
-          {errors.general && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-600">{errors.general}</p>
-            </div>
-          )}
-
           <div className="space-y-6">
             {/* Email */}
             <div>
@@ -102,7 +110,16 @@ export default function LoginPage() {
                 type="email"
                 id="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) {
+                    setErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.email;
+                      return newErrors;
+                    });
+                  }
+                }}
                 disabled={isLoading}
                 className={`w-full px-4 py-3 rounded-lg border-2 transition-colors ${
                   errors.email
@@ -126,7 +143,16 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   id="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errors.password) {
+                      setErrors(prev => {
+                        const newErrors = { ...prev };
+                        delete newErrors.password;
+                        return newErrors;
+                      });
+                    }
+                  }}
                   disabled={isLoading}
                   className={`w-full px-4 py-3 rounded-lg border-2 transition-colors pr-12 ${
                     errors.password
@@ -139,7 +165,7 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 disabled:opacity-50"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 disabled:opacity-50 cursor-pointer"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -153,7 +179,7 @@ export default function LoginPage() {
             <button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-lg transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-lg transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
             >
               {isLoading ? (
                 <>
@@ -169,7 +195,7 @@ export default function LoginPage() {
           {/* Signup Link */}
           <p className="mt-6 text-center text-sm text-slate-600">
             New user?{" "}
-            <a href="/signup" className="text-blue-600 hover:text-blue-700 font-semibold">
+            <a href="/signup" className="text-blue-600 hover:text-blue-700 font-semibold cursor-pointer">
               Create Account
             </a>
           </p>
