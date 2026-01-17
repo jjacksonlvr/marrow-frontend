@@ -116,7 +116,7 @@ export default function HomepageContent() {
               transition={{ duration: 0.6 }}
             >
               <h1 className="text-5xl lg:text-6xl font-bold text-slate-900 leading-tight mb-6">
-                Turn Your LinkedIn Network Into Revenue
+                Monetize Your LinkedIn Network
               </h1>
               <p className="text-xl text-slate-600 mb-8 leading-relaxed">
                 You've spent years building connections and expertise. Now get paid when people want to reach you. 
