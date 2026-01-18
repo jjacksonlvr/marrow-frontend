@@ -183,7 +183,7 @@ export default function ProfilePage() {
           {/* CTA */}
           <button
             onClick={() => setShowModal(true)}
-            className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-800 hover:scale-105 hover:shadow-lg transition-all shadow-lg"
+            className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-800 hover:scale-105 hover:shadow-lg transition-all shadow-lg cursor-pointer"
           >
             Book Your Session Now
           </button>
@@ -204,7 +204,7 @@ export default function ProfilePage() {
             <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-8 text-white relative">
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute top-4 right-4 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition-all hover:scale-105"
+                className="absolute top-4 right-4 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition-all hover:scale-105 cursor-pointer"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -284,8 +284,11 @@ export default function ProfilePage() {
                 </div>
               )}
 
-              {/* Price Card */}
-              <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-6 mb-6 flex items-center justify-between text-white hover:scale-105 hover:shadow-lg transition-all cursor-pointer">
+              {/* Price Card - Clickable */}
+              <div 
+                onClick={handleBookNow}
+                className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-6 mb-6 flex items-center justify-between text-white hover:scale-105 hover:shadow-lg transition-all cursor-pointer"
+              >
                 <div>
                   <div className="text-5xl font-bold">${price}</div>
                   <div className="text-lg opacity-90">30-minute session</div>
@@ -297,14 +300,14 @@ export default function ProfilePage() {
               <button
                 onClick={handleBookNow}
                 disabled={checkingOut}
-                className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-900 hover:scale-105 hover:shadow-lg transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mb-3"
+                className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-900 hover:scale-105 hover:shadow-lg transition-all shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mb-3"
               >
                 {checkingOut ? 'Opening checkout...' : 'Book Your Session Now'}
               </button>
 
               <button
                 onClick={() => setShowModal(false)}
-                className="w-full py-3 text-slate-600 hover:text-slate-900 font-semibold transition-all hover:scale-105"
+                className="w-full py-3 text-slate-600 hover:text-slate-900 font-semibold transition-all hover:scale-105 cursor-pointer"
               >
                 Maybe later
               </button>
