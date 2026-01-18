@@ -544,7 +544,7 @@ export default function HomepageContent() {
       <section className="py-24 px-6 bg-gradient-to-br from-blue-600 to-blue-700 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Ready To Monetize Your Expertise?
+            Ready To Monetize Your Network?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
             Join thousands of professionals turning their networks into income

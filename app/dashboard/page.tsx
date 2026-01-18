@@ -11,6 +11,8 @@ export default function Dashboard() {
   const [editing, setEditing] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [linkedinName, setLinkedinName] = useState<string>('');
+  const [linkedinImage, setLinkedinImage] = useState<string>('');
   const [orders, setOrders] = useState<any[]>([]);
   const [copied, setCopied] = useState(false);
   const [connectingStripe, setConnectingStripe] = useState(false);
@@ -73,6 +75,18 @@ export default function Dashboard() {
     }
 
     setProfile(data);
+    
+    // Set LinkedIn profile data
+    console.log('Loading LinkedIn profile data:', {
+      full_name: data.full_name,
+      linkedin_slug: data.linkedin_slug,
+      profile_picture_url: data.profile_picture_url,
+      email: data.email
+    });
+    
+    setLinkedinName(data.full_name || data.email?.split('@')[0] || 'User');
+    setLinkedinImage(data.profile_picture_url || '');
+    
     setFormData({
       title: data.title || '',
       description: data.description || '',
@@ -219,7 +233,7 @@ export default function Dashboard() {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-slate-900 mb-4">Profile Not Found</h1>
           <p className="text-slate-600 mb-6">You haven't completed onboarding yet.</p>
-          <a href="/onboard" className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition">
+          <a href="/onboard" className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition cursor-pointer">
             Complete Onboarding
           </a>
         </div>
@@ -232,16 +246,36 @@ export default function Dashboard() {
       {/* Header */}
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          {/* Logo - Links to Homepage */}
+          <a href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">M</span>
             </div>
             <span className="text-2xl font-bold text-slate-900">Marrow</span>
+          </a>
+          
+          {/* Navigation */}
+          <div className="flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-6">
+              <a href="/dashboard" className="text-slate-700 hover:text-slate-900 font-medium transition cursor-pointer">
+                Dashboard
+              </a>
+              <a href="/browse" className="text-slate-600 hover:text-slate-900 font-medium transition cursor-pointer">
+                Browse Creators
+              </a>
+              <a href={profile?.linkedin_slug ? `https://linkedin.com/in/${profile.linkedin_slug}` : '#'} 
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 className="text-slate-600 hover:text-slate-900 font-medium transition cursor-pointer">
+                My Profile
+              </a>
+            </nav>
+            
+            <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 transition cursor-pointer">
+              <LogOut className="w-4 h-4" />
+              <span className="font-medium">Log out</span>
+            </button>
           </div>
-          <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 transition">
-            <LogOut className="w-4 h-4" />
-            <span className="font-medium">Log out</span>
-          </button>
         </div>
       </header>
 
@@ -252,6 +286,55 @@ export default function Dashboard() {
           <p className="text-lg text-slate-600">Manage your profile and track your earnings</p>
         </div>
 
+        {/* LinkedIn Profile Header */}
+        {(linkedinName || linkedinImage) && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8"
+          >
+            <div className="flex items-center gap-4">
+              {linkedinImage ? (
+                <img 
+                  src={linkedinImage} 
+                  alt={linkedinName}
+                  className="w-20 h-20 rounded-full object-cover border-2 border-blue-500 shadow-md"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center border-2 border-blue-500 shadow-md">
+                  <span className="text-white font-bold text-3xl">
+                    {linkedinName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold text-slate-900 mb-1">{linkedinName}</h2>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5">
+                    <svg className="w-4 h-4 text-[#0A66C2]" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+                    </svg>
+                    <span className="text-sm font-medium text-slate-600">LinkedIn Verified</span>
+                  </div>
+                  {profile?.linkedin_slug && (
+                    <>
+                      <span className="text-slate-300">•</span>
+                      <a 
+                        href={`https://linkedin.com/in/${profile.linkedin_slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-600 hover:underline font-medium"
+                      >
+                        View Profile →
+                      </a>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Chrome Extension Banner */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl p-8 mb-8 text-white shadow-xl">
           <div className="flex items-start justify-between">
@@ -261,7 +344,7 @@ export default function Dashboard() {
                 <h3 className="text-2xl font-bold">Install the Chrome Extension</h3>
               </div>
               <p className="text-purple-100 mb-6">Add your booking button to your LinkedIn profile so people can book with you. Takes 30 seconds!</p>
-              <button className="px-8 py-4 bg-white text-purple-600 rounded-xl font-bold hover:bg-purple-50 transition flex items-center gap-2">
+              <button className="px-8 py-4 bg-white text-purple-600 rounded-xl font-bold hover:bg-purple-50 hover:scale-105 hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer">
                 <Download className="w-5 h-5" />
                 <span>Download Extension</span>
               </button>
@@ -341,7 +424,7 @@ export default function Dashboard() {
               <div className="flex-1">
                 <h3 className="text-2xl font-bold mb-2">Connect Your Stripe Account</h3>
                 <p className="text-blue-100 mb-6">To receive payouts, you need to connect your Stripe account. This takes about 2 minutes.</p>
-                <button onClick={connectStripeAccount} disabled={connectingStripe} className="px-8 py-4 bg-white text-blue-600 rounded-xl font-bold hover:bg-blue-50 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                <button onClick={connectStripeAccount} disabled={connectingStripe} className="px-8 py-4 bg-white text-blue-600 rounded-xl font-bold hover:bg-blue-50 hover:scale-105 hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer">
                   {connectingStripe ? (
                     <>
                       <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
@@ -382,17 +465,17 @@ export default function Dashboard() {
               <p className="text-slate-600 mt-1">This is what people see when they visit your LinkedIn</p>
             </div>
             {!editing ? (
-              <button onClick={() => setEditing(true)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition">
+              <button onClick={() => setEditing(true)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition cursor-pointer">
                 <Edit2 className="w-4 h-4" />
                 <span>Edit</span>
               </button>
             ) : (
               <div className="flex items-center gap-2">
-                <button onClick={() => setEditing(false)} className="flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition">
+                <button onClick={() => setEditing(false)} className="flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition cursor-pointer">
                   <X className="w-4 h-4" />
                   <span>Cancel</span>
                 </button>
-                <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50">
+                <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
                   <Save className="w-4 h-4" />
                   <span>{saving ? 'Saving...' : 'Save'}</span>
                 </button>
@@ -420,7 +503,7 @@ export default function Dashboard() {
                 <div className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-700">
                   linkedin.com/in/{profile.linkedin_slug}
                 </div>
-                <button onClick={copyProfileLink} className="px-4 py-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg transition flex items-center gap-2">
+                <button onClick={copyProfileLink} className="px-4 py-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg transition flex items-center gap-2 cursor-pointer">
                   {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
                   <span className="text-sm font-medium">{copied ? 'Copied!' : 'Copy'}</span>
                 </button>

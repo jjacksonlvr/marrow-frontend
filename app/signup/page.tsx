@@ -1,70 +1,25 @@
 'use client';
 
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
-import { supabase } from "@/lib/supabase";
+import { signUpWithLinkedIn } from "@/lib/auth-linkedin";
+import { CheckCircle2, Shield, Zap, Users } from "lucide-react";
 
 export default function SignupPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async () => {
-    const newErrors: Record<string, string> = {};
+  const handleLinkedInSignup = async () => {
+    setIsLoading(true);
+    setError(null);
     
-    if (!email) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Please enter a valid email";
-    }
-    
-    if (!password) {
-      newErrors.password = "Password is required";
-    } else if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-    
-    if (!confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-    
-    if (!agreedToTerms) {
-      newErrors.terms = "You must agree to the Terms of Service";
-    }
-    
-    setErrors(newErrors);
-    
-    if (Object.keys(newErrors).length === 0) {
-      setIsLoading(true);
-      
-      try {
-        // Create auth account
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-
-        if (authError) {
-          setErrors({ general: authError.message });
-          setIsLoading(false);
-          return;
-        }
-
-        // Success - redirect to onboarding
-        window.location.href = '/onboard';
-      } catch (error) {
-        console.error('Signup error:', error);
-        setErrors({ general: 'An unexpected error occurred. Please try again.' });
-        setIsLoading(false);
-      }
+    try {
+      await signUpWithLinkedIn();
+      // User will be redirected to LinkedIn - no need to handle response
+    } catch (error) {
+      console.error('LinkedIn signup failed:', error);
+      setError('LinkedIn authentication failed. Please try again.');
+      setIsLoading(false);
     }
   };
 
@@ -73,7 +28,7 @@ export default function SignupPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        className="w-full max-w-lg"
       >
         {/* Logo */}
         <div className="text-center mb-8">
@@ -83,159 +38,143 @@ export default function SignupPage() {
             </div>
             <span className="text-3xl font-bold text-slate-900">Marrow</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Create Your Account</h1>
-          <p className="text-slate-600">Start monetizing your LinkedIn network in minutes</p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Join Marrow</h1>
+          <p className="text-slate-600">Turn your LinkedIn network into revenue</p>
         </div>
 
-        {/* Form Card */}
+        {/* Main Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
-          {/* General Error */}
-          {errors.general && (
+          {/* Error Message */}
+          {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-600">{errors.general}</p>
+              <p className="text-sm text-red-600">{error}</p>
             </div>
           )}
 
-          <div className="space-y-6">
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-                className={`w-full px-4 py-3 rounded-lg border-2 transition-colors ${
-                  errors.email
-                    ? "border-red-300 focus:border-red-500"
-                    : "border-slate-200 focus:border-blue-500"
-                } outline-none disabled:opacity-50 disabled:cursor-not-allowed`}
-                placeholder="you@company.com"
-              />
-              {errors.email && (
-                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
-              )}
-            </div>
+          {/* LinkedIn OAuth Button */}
+          <button
+            onClick={handleLinkedInSignup}
+            disabled={isLoading}
+            className="w-full px-6 py-4 bg-[#0A66C2] hover:bg-[#004182] text-white rounded-xl font-semibold text-lg transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-3"
+          >
+            {isLoading ? (
+              <>
+                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Connecting to LinkedIn...</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+                </svg>
+                <span>Continue with LinkedIn</span>
+              </>
+            )}
+          </button>
 
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-slate-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={isLoading}
-                  className={`w-full px-4 py-3 rounded-lg border-2 transition-colors pr-12 ${
-                    errors.password
-                      ? "border-red-300 focus:border-red-500"
-                      : "border-slate-200 focus:border-blue-500"
-                  } outline-none disabled:opacity-50 disabled:cursor-not-allowed`}
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  disabled={isLoading}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 disabled:opacity-50"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-2 text-sm text-red-600">{errors.password}</p>
-              )}
+          {/* Divider */}
+          <div className="relative my-8">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200" />
             </div>
-
-            {/* Confirm Password */}
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-semibold text-slate-700 mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  disabled={isLoading}
-                  className={`w-full px-4 py-3 rounded-lg border-2 transition-colors pr-12 ${
-                    errors.confirmPassword
-                      ? "border-red-300 focus:border-red-500"
-                      : "border-slate-200 focus:border-blue-500"
-                  } outline-none disabled:opacity-50 disabled:cursor-not-allowed`}
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  disabled={isLoading}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 disabled:opacity-50"
-                >
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.confirmPassword && (
-                <p className="mt-2 text-sm text-red-600">{errors.confirmPassword}</p>
-              )}
+            <div className="relative flex justify-center text-sm">
+              <span className="px-3 bg-white text-slate-500 font-medium">
+                Why LinkedIn only?
+              </span>
             </div>
-
-            {/* Terms Checkbox */}
-            <div>
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <div className="relative flex items-center justify-center mt-0.5">
-                  <input
-                    type="checkbox"
-                    checked={agreedToTerms}
-                    onChange={(e) => setAgreedToTerms(e.target.checked)}
-                    disabled={isLoading}
-                    className="w-5 h-5 rounded border-2 border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                </div>
-                <span className="text-sm text-slate-600 leading-relaxed">
-                  I agree to the{" "}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-                    Terms of Service
-                  </a>{" "}
-                  and{" "}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-                    Privacy Policy
-                  </a>
-                </span>
-              </label>
-              {errors.terms && (
-                <p className="mt-2 text-sm text-red-600">{errors.terms}</p>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-lg transition-all shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Creating Account...</span>
-                </>
-              ) : (
-                "Create Account"
-              )}
-            </button>
           </div>
 
-          {/* Login Link */}
-          <p className="mt-6 text-center text-sm text-slate-600">
+          {/* Benefits Grid */}
+          <div className="space-y-4">
+            <div className="flex gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-green-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 mb-1">Zero Fraud</h3>
+                <p className="text-sm text-slate-600">
+                  Only verified LinkedIn profiles can join. No scammers, no impersonators, no fake accounts.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Users className="w-5 h-5 text-blue-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 mb-1">Build Trust</h3>
+                <p className="text-sm text-slate-600">
+                  People booking you see your verified LinkedIn profile, real credentials, and professional history.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-purple-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 mb-1">Instant Setup</h3>
+                <p className="text-sm text-slate-600">
+                  We auto-fill your name, photo, and profile URL. No typing, no verification delays.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                  <CheckCircle2 className="w-5 h-5 text-amber-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 mb-1">Verified Badge</h3>
+                <p className="text-sm text-slate-600">
+                  Show everyone you're legitimate with a verified checkmark next to your profile.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Security Note */}
+          <div className="mt-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <div className="flex items-start gap-2">
+              <svg className="w-5 h-5 text-slate-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              <div>
+                <p className="text-xs text-slate-700 leading-relaxed">
+                  <span className="font-semibold">Your privacy is protected.</span> We only access your public LinkedIn profile (name, photo, URL). We never post on your behalf or access your connections.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Links */}
+        <div className="mt-6 text-center space-y-3">
+          <p className="text-sm text-slate-600">
             Already have an account?{" "}
             <a href="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
               Log in
+            </a>
+          </p>
+          
+          <p className="text-xs text-slate-500">
+            By continuing, you agree to our{" "}
+            <a href="/terms" className="text-blue-600 hover:underline">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="/privacy" className="text-blue-600 hover:underline">
+              Privacy Policy
             </a>
           </p>
         </div>
