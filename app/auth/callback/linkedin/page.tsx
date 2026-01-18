@@ -3,11 +3,11 @@
 // app/auth/callback/linkedin/page.tsx
 // Handles the OAuth callback from LinkedIn
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { handleLinkedInCallback } from '@/lib/auth-linkedin';
 
-export default function LinkedInCallbackPage() {
+function LinkedInCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
@@ -162,5 +162,29 @@ export default function LinkedInCallbackPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LinkedInCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          {/* Logo */}
+          <div className="inline-flex items-center gap-2 mb-8">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-xl">M</span>
+            </div>
+            <span className="text-3xl font-bold text-slate-900">Marrow</span>
+          </div>
+          
+          {/* Loading Spinner */}
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-100 border-t-blue-600"></div>
+          <p className="mt-6 text-lg font-semibold text-slate-900">Processing LinkedIn authentication...</p>
+        </div>
+      </div>
+    }>
+      <LinkedInCallbackContent />
+    </Suspense>
   );
 }
