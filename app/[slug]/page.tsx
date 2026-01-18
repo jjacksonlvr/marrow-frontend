@@ -183,7 +183,7 @@ export default function ProfilePage() {
           {/* CTA */}
           <button
             onClick={() => setShowModal(true)}
-            className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
+            className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-800 hover:scale-105 hover:shadow-lg transition-all shadow-lg"
           >
             Book Your Session Now
           </button>
@@ -204,7 +204,7 @@ export default function ProfilePage() {
             <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-8 text-white relative">
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute top-4 right-4 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors"
+                className="absolute top-4 right-4 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition-all hover:scale-105"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -218,7 +218,7 @@ export default function ProfilePage() {
             {/* Modal Body */}
             <div className="p-8">
               {/* Marketing */}
-              <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
+              <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6 hover:border-blue-300 hover:shadow-md transition-all">
                 <div className="text-blue-900 font-bold text-lg mb-3 flex items-center gap-2">
                   <span>🚀</span>
                   <span>Why Book This Session?</span>
@@ -243,7 +243,7 @@ export default function ProfilePage() {
               {(user.bullet_title_1 || user.bullet_title_2 || user.bullet_title_3) && (
                 <div className="space-y-3 mb-6">
                   {user.bullet_title_1 && (
-                    <div className="flex gap-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <div className="flex gap-3 bg-slate-50 p-4 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-100 hover:shadow-md transition-all cursor-pointer">
                       <div className="w-7 h-7 bg-green-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 mt-0.5">
                         ✓
                       </div>
@@ -256,7 +256,7 @@ export default function ProfilePage() {
                     </div>
                   )}
                   {user.bullet_title_2 && (
-                    <div className="flex gap-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <div className="flex gap-3 bg-slate-50 p-4 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-100 hover:shadow-md transition-all cursor-pointer">
                       <div className="w-7 h-7 bg-green-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 mt-0.5">
                         ✓
                       </div>
@@ -269,7 +269,7 @@ export default function ProfilePage() {
                     </div>
                   )}
                   {user.bullet_title_3 && (
-                    <div className="flex gap-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <div className="flex gap-3 bg-slate-50 p-4 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-100 hover:shadow-md transition-all cursor-pointer">
                       <div className="w-7 h-7 bg-green-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 mt-0.5">
                         ✓
                       </div>
@@ -285,7 +285,7 @@ export default function ProfilePage() {
               )}
 
               {/* Price Card */}
-              <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-6 mb-6 flex items-center justify-between text-white">
+              <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-6 mb-6 flex items-center justify-between text-white hover:scale-105 hover:shadow-lg transition-all cursor-pointer">
                 <div>
                   <div className="text-5xl font-bold">${price}</div>
                   <div className="text-lg opacity-90">30-minute session</div>
@@ -297,14 +297,14 @@ export default function ProfilePage() {
               <button
                 onClick={handleBookNow}
                 disabled={checkingOut}
-                className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-900 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed mb-3"
+                className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-900 hover:scale-105 hover:shadow-lg transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mb-3"
               >
                 {checkingOut ? 'Opening checkout...' : 'Book Your Session Now'}
               </button>
 
               <button
                 onClick={() => setShowModal(false)}
-                className="w-full py-3 text-slate-600 hover:text-slate-900 font-semibold"
+                className="w-full py-3 text-slate-600 hover:text-slate-900 font-semibold transition-all hover:scale-105"
               >
                 Maybe later
               </button>
