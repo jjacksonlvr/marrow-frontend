@@ -106,6 +106,11 @@ function getBookingNotificationCreatorEmail(props: any) {
 }
 
 serve(async (req) => {
+  console.log("Webhook received");
+  console.log("Has SERVICE_ROLE_KEY:", !!Deno.env.get("SERVICE_ROLE_KEY"));
+  console.log("Has STRIPE_SECRET_KEY:", !!Deno.env.get("STRIPE_SECRET_KEY"));
+
+serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "Use POST" }, 405);
 
@@ -121,7 +126,12 @@ serve(async (req) => {
   if (!SERVICE_ROLE_KEY) return json({ error: "Missing SERVICE_ROLE_KEY" }, 500);
 
   const stripe = new Stripe(STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" });
-  const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+  const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+});
 
   const signature = req.headers.get("stripe-signature");
   if (!signature) return json({ error: "Missing stripe-signature header" }, 400);
@@ -249,7 +259,7 @@ serve(async (req) => {
   }
 
   // Send emails
-  if (RESEND_API_KEY) {
+  if (false && RESEND_API_KEY) {
     const buyerEmail = session.customer_details?.email;
     
     // Email to buyer
@@ -288,6 +298,9 @@ serve(async (req) => {
         platformFee: (platform_fee_cents / 100).toFixed(0),
         calendlyUrl: user.booking_url,
       });
+
+      console.log("RESEND_API_KEY exists:", !!RESEND_API_KEY);
+console.log("RESEND_API_KEY length:", RESEND_API_KEY?.length);
 
       await fetch("https://api.resend.com/emails", {
         method: "POST",
