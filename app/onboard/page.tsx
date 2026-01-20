@@ -31,13 +31,12 @@ export default function OnboardingWizard() {
     calendlyUrl: "",
   });
 
-  const totalSteps = 5; // Email, LinkedIn, Offer, Benefits, Calendly
+  const totalSteps = 5;
 
   useEffect(() => {
     const loadUserData = async () => {
       setIsLoading(true);
       
-      // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         window.location.href = '/signup';
@@ -45,12 +44,9 @@ export default function OnboardingWizard() {
       }
 
       setUserId(user.id);
-
-      // Set email from auth user
       setUserEmail(user.email || '');
       setFormData(prev => ({ ...prev, email: user.email || '' }));
 
-      // Get user profile data from database (LinkedIn data is already there from OAuth)
       const { data: profile, error } = await supabase
         .from('users')
         .select('full_name, linkedin_slug, linkedin_verified')
@@ -59,20 +55,17 @@ export default function OnboardingWizard() {
 
       if (error) {
         console.error('Error loading profile:', error);
-        // If user doesn't exist yet, something went wrong with OAuth
         alert('Profile not found. Please sign up again.');
         window.location.href = '/signup';
         return;
       }
 
-      // Verify LinkedIn authentication
       if (!profile?.linkedin_verified) {
         alert('LinkedIn verification required. Please sign up with LinkedIn.');
         window.location.href = '/signup';
         return;
       }
 
-      // Set LinkedIn data from database
       setUserName(profile.full_name || 'there');
       setLinkedinSlug(profile.linkedin_slug || '');
       
@@ -84,7 +77,6 @@ export default function OnboardingWizard() {
 
   const updateFormData = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
@@ -102,7 +94,6 @@ export default function OnboardingWizard() {
     const newErrors: Record<string, string> = {};
 
     if (step === 1) {
-      // Validate email
       if (!formData.email.trim()) {
         newErrors.email = "Email is required";
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -111,7 +102,6 @@ export default function OnboardingWizard() {
     }
 
     if (step === 2) {
-      // Validate LinkedIn slug
       if (!linkedinSlug || !linkedinSlug.trim()) {
         newErrors.linkedinSlug = "LinkedIn username is required";
       } else if (!/^[a-zA-Z0-9-]+$/.test(linkedinSlug)) {
@@ -120,7 +110,6 @@ export default function OnboardingWizard() {
     }
 
     if (step === 3) {
-      // Validate offer details
       if (!formData.offerTitle.trim()) {
         newErrors.offerTitle = "Offer title is required";
       }
@@ -128,7 +117,6 @@ export default function OnboardingWizard() {
         newErrors.offerDescription = "Description is required";
       }
       
-      // Validate price
       if (showCustomPrice) {
         const priceNum = parseFloat(customPrice);
         if (!customPrice || isNaN(priceNum) || priceNum <= 0) {
@@ -142,7 +130,6 @@ export default function OnboardingWizard() {
     }
 
     if (step === 4) {
-      // Validate benefits
       if (!formData.benefit1Title.trim()) {
         newErrors.benefit1Title = "Benefit 1 title is required";
       }
@@ -164,7 +151,6 @@ export default function OnboardingWizard() {
     }
 
     if (step === 5) {
-      // Validate Calendly URL
       if (!formData.calendlyUrl.trim()) {
         newErrors.calendlyUrl = "Calendly URL is required";
       } else if (!formData.calendlyUrl.includes('calendly.com')) {
@@ -184,62 +170,38 @@ export default function OnboardingWizard() {
   };
 
   const nextStep = () => {
-    if (!validateStep(currentStep)) {
-      console.log('Validation failed for step:', currentStep);
-      return; // Don't proceed if validation fails
+    if (currentStep <= totalSteps && validateStep(currentStep)) {
+      setCurrentStep((prev) => prev + 1);
     }
-    
-    console.log('Advancing from step', currentStep, 'to step', currentStep + 1);
-    setCurrentStep(currentStep + 1);
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
   const saveToDatabase = async () => {
-    // Validate before saving
-    if (!validateStep(currentStep)) {
-      console.log('Validation failed for step:', currentStep);
-      return;
-    }
+    if (!validateStep(5)) return;
 
     setIsLoading(true);
-    console.log('Starting database save with data:', {
-      email: formData.email,
-      linkedin_slug: linkedinSlug,
-      title: formData.offerTitle,
-      price: showCustomPrice ? customPrice : formData.price,
-      calendlyUrl: formData.calendlyUrl
-    });
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        showToast('Not authenticated. Please sign up first.', 'error');
-        window.location.href = '/signup';
-        return;
+      let finalPrice = formData.price;
+      if (showCustomPrice && customPrice) {
+        finalPrice = `$${customPrice}`;
       }
 
-      // Use custom price if set, otherwise use dropdown value
-      const priceString = showCustomPrice 
-        ? customPrice 
-        : formData.price.replace('$', '').replace(',', '');
-      const priceCents = Math.round(parseFloat(priceString) * 100);
+      const priceInCents = Math.round(parseFloat(finalPrice.replace('$', '')) * 100);
 
-      console.log('Updating user profile for user ID:', user.id);
-
-      // UPDATE the existing user record (created by OAuth) instead of INSERT
       const { error } = await supabase
         .from('users')
         .update({
           email: formData.email,
-          linkedin_slug: linkedinSlug, // Save the slug
+          linkedin_slug: linkedinSlug,
           title: formData.offerTitle,
           description: formData.offerDescription,
-          price_cents: priceCents,
+          price_cents: priceInCents,
           bullet_title_1: formData.benefit1Title,
           bullet_desc_1: formData.benefit1Description,
           bullet_title_2: formData.benefit2Title,
@@ -249,21 +211,43 @@ export default function OnboardingWizard() {
           booking_url: formData.calendlyUrl,
           is_active: true,
         })
-        .eq('id', user.id);
+        .eq('id', userId);
 
       if (error) {
         console.error('Database update error:', error);
-        showToast(`Error: ${error.message}`, 'error');
+        showToast('Failed to save profile. Please try again.', 'error');
         setIsLoading(false);
         return;
       }
 
-      console.log('Database update successful!');
-      setIsLoading(false);
-      nextStep(); // Go to success screen (Step 6)
-    } catch (error) {
-      console.error('Save error:', error);
+      // Send welcome email
+      if (formData.email) {
+        try {
+          await fetch('https://mqvuqmysklmkjtarmods.supabase.co/functions/v1/send-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+            },
+            body: JSON.stringify({
+              to: formData.email,
+              subject: 'Welcome to Marrow! 🎉',
+              html: getWelcomeEmailHtml(userName, linkedinSlug),
+              text: getWelcomeEmailText(userName, linkedinSlug),
+            }),
+          });
+        } catch (emailError) {
+          console.error('Failed to send welcome email:', emailError);
+        }
+      }
+
+      setCurrentStep(6);
+      showToast('Profile saved successfully!', 'success');
+    } catch (err) {
+      console.error('Unexpected error:', err);
       showToast('An unexpected error occurred. Please try again.', 'error');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -272,64 +256,53 @@ export default function OnboardingWizard() {
     window.location.href = '/dashboard';
   };
 
-  // Show loading state while fetching user data
-  if (isLoading && currentStep === 1) {
+  if (isLoading && currentStep < 6) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-100 border-t-blue-600 mb-4"></div>
-          <p className="text-slate-600">Loading your profile...</p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-slate-600 text-lg">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 flex items-center justify-center px-6 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-6">
       <div className="w-full max-w-2xl">
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold text-slate-600">Step {currentStep} of {totalSteps}</span>
-            <span className="text-sm text-slate-500">{Math.round((currentStep / totalSteps) * 100)}% complete</span>
-          </div>
-          <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-            <motion.div 
-              className="h-full bg-gradient-to-r from-blue-600 to-blue-500" 
-              initial={{ width: 0 }} 
-              animate={{ width: `${(currentStep / totalSteps) * 100}%` }} 
-              transition={{ duration: 0.3 }} 
-            />
-          </div>
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">Welcome, {userName}! 👋</h1>
+          <p className="text-slate-600">Let's set up your offer in just a few steps</p>
         </div>
 
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">M</span>
+        {currentStep <= totalSteps && (
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-semibold text-slate-700">Step {currentStep} of {totalSteps}</span>
+              <span className="text-sm text-slate-600">{Math.round((currentStep / totalSteps) * 100)}% Complete</span>
+            </div>
+            <div className="w-full bg-slate-200 rounded-full h-2">
+              <div 
+                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              />
+            </div>
           </div>
-          <span className="text-2xl font-bold text-slate-900">Marrow</span>
-        </div>
+        )}
 
         <AnimatePresence mode="wait">
-          <motion.div 
-            key={currentStep} 
-            initial={{ opacity: 0, x: 20 }} 
-            animate={{ opacity: 1, x: 0 }} 
-            exit={{ opacity: 0, x: -20 }} 
-            transition={{ duration: 0.3 }} 
-            className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 md:p-12"
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white rounded-2xl shadow-xl p-8"
           >
-            
-            {/* Step 1: Email Only */}
             {currentStep === 1 && (
               <div>
-                <div className="text-4xl mb-4">📧</div>
-                <h2 className="text-3xl font-bold text-slate-900 mb-3">Never Miss a Booking</h2>
-                <p className="text-lg text-slate-600 mb-8">Enter your email so we can notify you the moment someone books time with you</p>
-                
-                {/* Email Input */}
-                <div className="mb-6">
-                  <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
-                    Your Email <span className="text-red-500">*</span>
+                <h2 className="text-3xl font-bold text-slate-900 mb-3">What's Your Email?</h2>
+                <p className="text-slate-600 mb-8">We'll send booking notifications here</p>
+                <div className="space-y-2 mb-6">
+                  <label htmlFor="email" className="block text-sm font-semibold text-slate-700">
+                    Email Address <span className="text-red-500">*</span>
                   </label>
                   <input 
                     type="email" 
@@ -338,89 +311,59 @@ export default function OnboardingWizard() {
                     onChange={(e) => updateFormData("email", e.target.value)} 
                     className={`w-full px-4 py-3 rounded-lg border-2 ${
                       errors.email ? 'border-red-500' : 'border-slate-200'
-                    } focus:border-blue-500 outline-none transition-colors text-lg`}
-                    placeholder="you@email.com" 
+                    } focus:border-blue-500 outline-none transition-colors`}
+                    placeholder="your.email@example.com" 
                   />
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-2">{errors.email}</p>
                   )}
                 </div>
-                
-                {/* Email Explainer Card */}
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mt-0.5">
-                      <span className="text-white text-xl">💰</span>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-green-900 mb-1">This is How You Get Paid</p>
-                      <p className="text-sm text-green-700 leading-relaxed">
-                        Every booking notification goes straight to this email. We'll alert you instantly so you never miss an opportunity to earn.
-                      </p>
-                    </div>
-                  </div>
+                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                  <p className="text-sm text-blue-800">
+                    <span className="font-semibold">💡 Never Miss a Booking:</span> We'll notify you instantly when someone books time with you
+                  </p>
                 </div>
               </div>
             )}
 
-            {/* Step 2: LinkedIn Username */}
             {currentStep === 2 && (
               <div>
-                <div className="text-4xl mb-4">🔗</div>
-                <h2 className="text-3xl font-bold text-slate-900 mb-3">Connect Your LinkedIn</h2>
-                <p className="text-lg text-slate-600 mb-8">This adds your booking button directly to your LinkedIn profile</p>
-                
-                {/* LinkedIn Username Input */}
-                <div className="mb-6">
-                  <label htmlFor="linkedinSlug" className="block text-sm font-semibold text-slate-700 mb-2">
-                    Your LinkedIn Username <span className="text-red-500">*</span>
+                <h2 className="text-3xl font-bold text-slate-900 mb-3">Your LinkedIn Username</h2>
+                <p className="text-slate-600 mb-8">This appears after linkedin.com/in/</p>
+                <div className="space-y-2 mb-6">
+                  <label htmlFor="linkedinSlug" className="block text-sm font-semibold text-slate-700">
+                    LinkedIn Username <span className="text-red-500">*</span>
                   </label>
                   <div className="flex items-center gap-2">
-                    <span className="text-slate-600 font-medium text-lg">linkedin.com/in/</span>
+                    <span className="text-slate-500 text-sm">linkedin.com/in/</span>
                     <input 
                       type="text" 
-                      id="linkedinSlug"
-                      value={linkedinSlug}
-                      onChange={(e) => setLinkedinSlug(e.target.value)}
+                      id="linkedinSlug" 
+                      value={linkedinSlug} 
+                      onChange={(e) => setLinkedinSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))} 
                       className={`flex-1 px-4 py-3 rounded-lg border-2 ${
                         errors.linkedinSlug ? 'border-red-500' : 'border-slate-200'
-                      } focus:border-blue-500 outline-none transition-colors text-lg`}
-                      placeholder="your-username"
+                      } focus:border-blue-500 outline-none transition-colors`}
+                      placeholder="your-name" 
                     />
                   </div>
                   {errors.linkedinSlug && (
                     <p className="text-red-500 text-sm mt-2">{errors.linkedinSlug}</p>
                   )}
-                  <p className="text-xs text-slate-500 mt-2">
-                    Find your custom URL at{" "}
-                    <a href="https://www.linkedin.com/public-profile/settings" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                      LinkedIn Settings → Public Profile
-                    </a>
-                  </p>
                 </div>
-
-                {/* LinkedIn Explainer Card */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mt-0.5">
-                      <span className="text-white text-xl">🎯</span>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-blue-900 mb-1">Your Money-Making Badge</p>
-                      <p className="text-sm text-blue-700 leading-relaxed">
-                        Once you install our Chrome extension, a "Book Time" button appears on your LinkedIn profile. Anyone viewing your profile can instantly book and pay you—no back-and-forth needed.
-                      </p>
-                    </div>
-                  </div>
+                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <p className="text-sm text-green-800">
+                    <span className="font-semibold">✓ Example:</span> If your profile is linkedin.com/in/john-smith, enter "john-smith"
+                  </p>
                 </div>
               </div>
             )}
 
-            {/* Step 3: Offer Details */}
             {currentStep === 3 && (
               <div>
                 <h2 className="text-3xl font-bold text-slate-900 mb-3">What Are You Offering?</h2>
-                <p className="text-slate-600 mb-8">Describe what people get when they pay to connect with you</p>
+                <p className="text-slate-600 mb-8">Describe your consultation service</p>
+                
                 <div className="space-y-6">
                   <div>
                     <label htmlFor="offerTitle" className="block text-sm font-semibold text-slate-700 mb-2">
@@ -433,13 +376,14 @@ export default function OnboardingWizard() {
                       onChange={(e) => updateFormData("offerTitle", e.target.value)} 
                       className={`w-full px-4 py-3 rounded-lg border-2 ${
                         errors.offerTitle ? 'border-red-500' : 'border-slate-200'
-                      } focus:border-blue-500 outline-none transition-colors text-lg`}
-                      placeholder="30-Minute Career Strategy Call" 
+                      } focus:border-blue-500 outline-none transition-colors`}
+                      placeholder="e.g., Career Strategy Session" 
                     />
                     {errors.offerTitle && (
-                      <p className="text-red-500 text-sm mt-2">{errors.offerTitle}</p>
+                      <p className="text-red-500 text-sm mt-1">{errors.offerTitle}</p>
                     )}
                   </div>
+
                   <div>
                     <label htmlFor="offerDescription" className="block text-sm font-semibold text-slate-700 mb-2">
                       Description <span className="text-red-500">*</span>
@@ -448,88 +392,63 @@ export default function OnboardingWizard() {
                       id="offerDescription" 
                       value={formData.offerDescription} 
                       onChange={(e) => updateFormData("offerDescription", e.target.value)} 
-                      rows={4} 
+                      rows={4}
                       className={`w-full px-4 py-3 rounded-lg border-2 ${
                         errors.offerDescription ? 'border-red-500' : 'border-slate-200'
                       } focus:border-blue-500 outline-none transition-colors resize-none`}
-                      placeholder="Get personalized advice on breaking into tech, navigating career transitions, and growing your professional network."
+                      placeholder="Brief description of what you'll help with..." 
                     />
                     {errors.offerDescription && (
-                      <p className="text-red-500 text-sm mt-2">{errors.offerDescription}</p>
+                      <p className="text-red-500 text-sm mt-1">{errors.offerDescription}</p>
                     )}
                   </div>
+
                   <div>
-                    <label htmlFor="price" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Your Price <span className="text-red-500">*</span>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      Price (30 minutes) <span className="text-red-500">*</span>
                     </label>
-                    {!showCustomPrice ? (
-                      <div>
-                        <select 
-                          id="price" 
-                          value={formData.price} 
-                          onChange={(e) => {
-                            if (e.target.value === "custom") {
-                              setShowCustomPrice(true);
-                              setCustomPrice("");
-                            } else {
-                              updateFormData("price", e.target.value);
-                            }
-                          }} 
-                          className={`w-full px-4 py-3 rounded-lg border-2 ${
-                            errors.price ? 'border-red-500' : 'border-slate-200'
-                          } focus:border-blue-500 outline-none transition-colors text-lg`}
+                    <div className="grid grid-cols-4 gap-2 mb-3">
+                      {["$50", "$100", "$200", "$500"].map((price) => (
+                        <button
+                          key={price}
+                          type="button"
+                          onClick={() => {
+                            updateFormData("price", price);
+                            setShowCustomPrice(false);
+                          }}
+                          className={`py-2 px-4 rounded-lg border-2 font-semibold transition-all ${
+                            formData.price === price && !showCustomPrice
+                              ? "border-blue-600 bg-blue-50 text-blue-600"
+                              : "border-slate-200 hover:border-slate-300"
+                          }`}
                         >
-                          <option value="$50">$50</option>
-                          <option value="$100">$100</option>
-                          <option value="$150">$150</option>
-                          <option value="$200">$200</option>
-                          <option value="$300">$300</option>
-                          <option value="$500">$500</option>
-                          <option value="custom">Custom amount...</option>
-                        </select>
-                        {errors.price && (
-                          <p className="text-red-500 text-sm mt-2">{errors.price}</p>
-                        )}
-                      </div>
-                    ) : (
-                      <div>
-                        <div className="flex gap-2">
-                          <div className="relative flex-1">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 text-lg">$</span>
-                            <input
-                              type="number"
-                              value={customPrice}
-                              onChange={(e) => {
-                                setCustomPrice(e.target.value);
-                                if (errors.customPrice) {
-                                  setErrors((prev) => ({ ...prev, customPrice: "" }));
-                                }
-                              }}
-                              className={`w-full pl-8 pr-4 py-3 rounded-lg border-2 ${
-                                errors.customPrice ? 'border-red-500' : 'border-slate-200'
-                              } focus:border-blue-500 outline-none transition-colors text-lg`}
-                              placeholder="Enter custom price"
-                              min="10"
-                              max="10000"
-                              step="1"
-                            />
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setShowCustomPrice(false);
-                              setCustomPrice("");
-                              setErrors((prev) => ({ ...prev, customPrice: "" }));
-                            }}
-                            className="px-4 py-3 border-2 border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-                          >
-                            Cancel
-                          </button>
-                        </div>
+                          {price}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowCustomPrice(!showCustomPrice)}
+                      className="text-blue-600 hover:text-blue-700 text-sm font-semibold"
+                    >
+                      {showCustomPrice ? "- Use preset price" : "+ Custom price"}
+                    </button>
+                    {showCustomPrice && (
+                      <div className="mt-3">
+                        <input
+                          type="number"
+                          value={customPrice}
+                          onChange={(e) => setCustomPrice(e.target.value)}
+                          className={`w-full px-4 py-3 rounded-lg border-2 ${
+                            errors.customPrice ? 'border-red-500' : 'border-slate-200'
+                          } focus:border-blue-500 outline-none transition-colors`}
+                          placeholder="Enter amount ($10 - $10,000)"
+                          min="10"
+                          max="10000"
+                        />
                         {errors.customPrice && (
-                          <p className="text-red-500 text-sm mt-2">{errors.customPrice}</p>
+                          <p className="text-red-500 text-sm mt-1">{errors.customPrice}</p>
                         )}
-                        <p className="text-xs text-slate-500 mt-2">Minimum $10, Maximum $10,000</p>
                       </div>
                     )}
                   </div>
@@ -537,34 +456,41 @@ export default function OnboardingWizard() {
               </div>
             )}
 
-            {/* Step 4: Benefits */}
             {currentStep === 4 && (
               <div>
-                <h2 className="text-3xl font-bold text-slate-900 mb-3">What Makes You Valuable?</h2>
-                <p className="text-slate-600 mb-8">Add 3 key benefits people get when they book with you</p>
-                <div className="space-y-8">
-                  <div className="pb-6 border-b border-slate-200">
-                    <h3 className="font-semibold text-slate-700 mb-4">Bullet Point 1 <span className="text-red-500">*</span></h3>
+                <h2 className="text-3xl font-bold text-slate-900 mb-3">What Will They Get?</h2>
+                <p className="text-slate-600 mb-8">Highlight 3 key benefits of working with you</p>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 mb-4">Benefit 1</h3>
                     <div className="space-y-3">
                       <div>
+                        <label htmlFor="benefit1Title" className="block text-sm font-semibold text-slate-700 mb-2">
+                          Title <span className="text-red-500">*</span>
+                        </label>
                         <input 
                           type="text" 
+                          id="benefit1Title" 
                           value={formData.benefit1Title} 
                           onChange={(e) => updateFormData("benefit1Title", e.target.value)} 
                           className={`w-full px-4 py-2 rounded-lg border-2 ${
                             errors.benefit1Title ? 'border-red-500' : 'border-slate-200'
                           } focus:border-blue-500 outline-none transition-colors`}
-                          placeholder="Benefit Title (e.g., Career Advice)" 
+                          placeholder="e.g., Expert Career Guidance" 
                         />
                         {errors.benefit1Title && (
                           <p className="text-red-500 text-sm mt-1">{errors.benefit1Title}</p>
                         )}
                       </div>
                       <div>
-                        <input 
-                          type="text" 
+                        <label htmlFor="benefit1Description" className="block text-sm font-semibold text-slate-700 mb-2">
+                          Description <span className="text-red-500">*</span>
+                        </label>
+                        <textarea 
+                          id="benefit1Description" 
                           value={formData.benefit1Description} 
                           onChange={(e) => updateFormData("benefit1Description", e.target.value)} 
+                          rows={2}
                           className={`w-full px-4 py-2 rounded-lg border-2 ${
                             errors.benefit1Description ? 'border-red-500' : 'border-slate-200'
                           } focus:border-blue-500 outline-none transition-colors`}
@@ -576,28 +502,37 @@ export default function OnboardingWizard() {
                       </div>
                     </div>
                   </div>
-                  <div className="pb-6 border-b border-slate-200">
-                    <h3 className="font-semibold text-slate-700 mb-4">Bullet Point 2 <span className="text-red-500">*</span></h3>
+
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 mb-4">Benefit 2</h3>
                     <div className="space-y-3">
                       <div>
+                        <label htmlFor="benefit2Title" className="block text-sm font-semibold text-slate-700 mb-2">
+                          Title <span className="text-red-500">*</span>
+                        </label>
                         <input 
                           type="text" 
+                          id="benefit2Title" 
                           value={formData.benefit2Title} 
                           onChange={(e) => updateFormData("benefit2Title", e.target.value)} 
                           className={`w-full px-4 py-2 rounded-lg border-2 ${
                             errors.benefit2Title ? 'border-red-500' : 'border-slate-200'
                           } focus:border-blue-500 outline-none transition-colors`}
-                          placeholder="Benefit Title" 
+                          placeholder="Title" 
                         />
                         {errors.benefit2Title && (
                           <p className="text-red-500 text-sm mt-1">{errors.benefit2Title}</p>
                         )}
                       </div>
                       <div>
-                        <input 
-                          type="text" 
+                        <label htmlFor="benefit2Description" className="block text-sm font-semibold text-slate-700 mb-2">
+                          Description <span className="text-red-500">*</span>
+                        </label>
+                        <textarea 
+                          id="benefit2Description" 
                           value={formData.benefit2Description} 
                           onChange={(e) => updateFormData("benefit2Description", e.target.value)} 
+                          rows={2}
                           className={`w-full px-4 py-2 rounded-lg border-2 ${
                             errors.benefit2Description ? 'border-red-500' : 'border-slate-200'
                           } focus:border-blue-500 outline-none transition-colors`}
@@ -609,28 +544,37 @@ export default function OnboardingWizard() {
                       </div>
                     </div>
                   </div>
+
                   <div>
-                    <h3 className="font-semibold text-slate-700 mb-4">Bullet Point 3 <span className="text-red-500">*</span></h3>
+                    <h3 className="text-lg font-bold text-slate-900 mb-4">Benefit 3</h3>
                     <div className="space-y-3">
                       <div>
+                        <label htmlFor="benefit3Title" className="block text-sm font-semibold text-slate-700 mb-2">
+                          Title <span className="text-red-500">*</span>
+                        </label>
                         <input 
                           type="text" 
+                          id="benefit3Title" 
                           value={formData.benefit3Title} 
                           onChange={(e) => updateFormData("benefit3Title", e.target.value)} 
                           className={`w-full px-4 py-2 rounded-lg border-2 ${
                             errors.benefit3Title ? 'border-red-500' : 'border-slate-200'
                           } focus:border-blue-500 outline-none transition-colors`}
-                          placeholder="Benefit Title" 
+                          placeholder="Title" 
                         />
                         {errors.benefit3Title && (
                           <p className="text-red-500 text-sm mt-1">{errors.benefit3Title}</p>
                         )}
                       </div>
                       <div>
-                        <input 
-                          type="text" 
+                        <label htmlFor="benefit3Description" className="block text-sm font-semibold text-slate-700 mb-2">
+                          Description <span className="text-red-500">*</span>
+                        </label>
+                        <textarea 
+                          id="benefit3Description" 
                           value={formData.benefit3Description} 
                           onChange={(e) => updateFormData("benefit3Description", e.target.value)} 
+                          rows={2}
                           className={`w-full px-4 py-2 rounded-lg border-2 ${
                             errors.benefit3Description ? 'border-red-500' : 'border-slate-200'
                           } focus:border-blue-500 outline-none transition-colors`}
@@ -646,7 +590,6 @@ export default function OnboardingWizard() {
               </div>
             )}
 
-            {/* Step 5: Calendly - Saves to database */}
             {currentStep === 5 && (
               <div>
                 <h2 className="text-3xl font-bold text-slate-900 mb-3">Where Should People Book Time?</h2>
@@ -680,10 +623,8 @@ export default function OnboardingWizard() {
               </div>
             )}
 
-            {/* Success Screen - Step 6 (not counted in totalSteps) */}
             {currentStep === 6 && (
               <div className="text-center">
-                {/* Celebration Header */}
                 <div className="mb-8">
                   <div className="text-7xl mb-4 animate-bounce">🎉</div>
                   <h2 className="text-5xl font-bold text-slate-900 mb-3">You're All Set!</h2>
@@ -691,7 +632,6 @@ export default function OnboardingWizard() {
                   <p className="text-lg text-green-600 font-semibold">🚀 Time to start making money from your expertise!</p>
                 </div>
                 
-                {/* Earning Potential Card */}
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-8 mb-8 border-2 border-green-200">
                   <div className="text-sm text-green-700 font-semibold mb-2">YOUR EARNING POTENTIAL</div>
                   <div className="text-5xl font-bold text-green-700 mb-2">
@@ -720,9 +660,7 @@ export default function OnboardingWizard() {
                   </div>
                 </div>
 
-                {/* Two Primary CTAs */}
                 <div className="grid md:grid-cols-2 gap-4 mb-8">
-                  {/* Download Extension - Primary */}
                   <button 
                     className="px-8 py-6 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl font-bold text-lg transition-all shadow-xl shadow-purple-600/30 hover:shadow-2xl hover:shadow-purple-600/40 hover:scale-105 flex flex-col items-center justify-center gap-2 cursor-pointer"
                   >
@@ -731,7 +669,6 @@ export default function OnboardingWizard() {
                     <span className="text-sm font-normal text-purple-100">Add button to LinkedIn profile</span>
                   </button>
 
-                  {/* Go to Dashboard - Secondary */}
                   <button
                     onClick={goToDashboard}
                     className="px-8 py-6 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl hover:scale-105 flex flex-col items-center justify-center gap-2 cursor-pointer"
@@ -742,7 +679,6 @@ export default function OnboardingWizard() {
                   </button>
                 </div>
                 
-                {/* Quick Guide */}
                 <div className="bg-blue-50 rounded-xl p-6 border border-blue-200 text-left">
                   <p className="font-semibold text-blue-900 mb-3 text-center">🎯 How to Start Earning:</p>
                   <ol className="space-y-3 text-slate-700">
@@ -763,7 +699,6 @@ export default function OnboardingWizard() {
               </div>
             )}
 
-            {/* Navigation Buttons */}
             <div className="flex items-center justify-between mt-10 pt-8 border-t border-slate-200">
               <button 
                 onClick={prevStep} 
@@ -800,4 +735,55 @@ export default function OnboardingWizard() {
       </div>
     </div>
   );
+}
+
+function getWelcomeEmailHtml(name: string, slug: string) {
+  const profileUrl = `https://marrow.ideatoads.com/${slug}`;
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f8fafc;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8fafc;padding:40px 20px;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+<tr><td style="background:linear-gradient(135deg,#0a66c2 0%,#004182 100%);padding:40px;text-align:center;">
+<h1 style="color:#ffffff;font-size:32px;font-weight:700;margin:0 0 8px 0;">Welcome to Marrow! 🎉</h1>
+<p style="color:rgba(255,255,255,0.9);font-size:16px;margin:0;">Your profile is live and ready to earn</p>
+</td></tr>
+<tr><td style="padding:40px;">
+<p style="color:#1e293b;font-size:16px;margin:0 0 24px 0;">Hi ${name},</p>
+<p style="color:#1e293b;font-size:16px;margin:0 0 32px 0;">Congratulations! Your Marrow profile is now live. You're ready to start monetizing your expertise.</p>
+<h2 style="color:#1e293b;font-size:20px;font-weight:700;margin:0 0 20px 0;">🚀 Get Your First Booking</h2>
+<div style="padding:16px;background-color:#f8fafc;border-left:4px solid #0a66c2;margin-bottom:12px;border-radius:4px;">
+<p style="color:#1e293b;font-size:15px;font-weight:600;margin:0 0 6px 0;">1. Install the Chrome Extension</p>
+<p style="color:#64748b;font-size:14px;margin:0;">Add a booking button to your LinkedIn profile (takes 30 seconds)</p>
+</div>
+<div style="padding:16px;background-color:#f8fafc;border-left:4px solid #0a66c2;margin-bottom:12px;border-radius:4px;">
+<p style="color:#1e293b;font-size:15px;font-weight:600;margin:0 0 6px 0;">2. Share Your Marrow Profile</p>
+<p style="color:#64748b;font-size:14px;margin:0;">Post on LinkedIn, Twitter, or share with your network</p>
+</div>
+<div style="padding:16px;background-color:#f0fdf4;border-left:4px solid #22c55e;border-radius:4px;margin-bottom:32px;">
+<p style="color:#1e293b;font-size:15px;font-weight:600;margin:0 0 6px 0;">3. Start Earning!</p>
+<p style="color:#64748b;font-size:14px;margin:0;">Get notified when someone books, deliver great sessions, get paid</p>
+</div>
+<div style="background-color:#eff6ff;border-radius:8px;padding:20px;margin-bottom:32px;">
+<p style="color:#1e40af;font-size:14px;margin:0 0 10px 0;font-weight:600;">📱 Your Marrow Profile:</p>
+<a href="${profileUrl}" style="color:#2563eb;font-size:15px;font-weight:600;word-break:break-all;text-decoration:underline;">${profileUrl}</a>
+</div>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+<tr><td align="center" style="padding-bottom:12px;">
+<a href="https://marrow.ideatoads.com/dashboard" style="display:inline-block;background:linear-gradient(135deg,#0a66c2,#004182);color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:8px;font-weight:700;font-size:16px;">Go to Dashboard</a>
+</td></tr>
+</table>
+</td></tr>
+<tr><td style="background-color:#f8fafc;padding:32px;text-align:center;border-top:1px solid #e2e8f0;">
+<p style="color:#94a3b8;font-size:13px;margin:0 0 8px 0;">Questions? Reply to this email</p>
+<p style="color:#cbd5e1;font-size:11px;margin:0;">Powered by Marrow</p>
+</td></tr>
+</table></td></tr></table>
+</body></html>`;
+}
+
+function getWelcomeEmailText(name: string, slug: string) {
+  return `Welcome to Marrow!\n\nHi ${name},\n\nYour profile is live at https://marrow.ideatoads.com/${slug}\n\nStart earning by:\n1. Installing the Chrome extension\n2. Sharing your profile\n3. Getting your first booking!\n\nGo to Dashboard: https://marrow.ideatoads.com/dashboard\n\nPowered by Marrow`;
 }
