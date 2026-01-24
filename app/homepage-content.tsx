@@ -561,6 +561,290 @@ export default function HomepageContent() {
         </div>
       </section>
 
+      {/* How Buyers Find You Section */}
+      <section className="py-24 px-6 bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-slate-900 mb-4">
+              People Are Searching for Experts Like You
+            </h2>
+            <p className="text-2xl text-slate-600">
+              Here's how they find you and why they'll pay
+            </p>
+          </div>
+          
+          {/* Discovery Flow */}
+          <div className="flex items-center justify-between gap-6 mb-16 max-w-6xl mx-auto">
+            <div className="flex-1 bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all">
+              <div className="text-5xl mb-4">🔍</div>
+              <div className="text-xl font-bold text-slate-900 mb-2">
+                Browse <span className="text-blue-600">LinkedIn</span>
+              </div>
+              <div className="text-slate-600">Looking for industry experts</div>
+            </div>
+            
+            <div className="text-3xl text-blue-600">→</div>
+            
+            <div className="flex-1 bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all">
+              <div className="text-5xl mb-4">💎</div>
+              <div className="text-xl font-bold text-slate-900 mb-2">See Marrow Badge</div>
+              <div className="text-slate-600">Your profile stands out</div>
+            </div>
+            
+            <div className="text-3xl text-blue-600">→</div>
+            
+            <div className="flex-1 bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all">
+              <div className="text-5xl mb-4">📅</div>
+              <div className="text-xl font-bold text-slate-900 mb-2">Book Instantly</div>
+              <div className="text-slate-600">Guaranteed response</div>
+            </div>
+            
+            <div className="text-3xl text-blue-600">→</div>
+            
+            <div className="flex-1 bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all">
+              <div className="text-5xl mb-4">💰</div>
+              <div className="text-xl font-bold text-slate-900 mb-2">You Get Paid</div>
+              <div className="text-slate-600">Automatic deposit</div>
+            </div>
+          </div>
+
+          {/* Why They Pay */}
+          <div className="bg-white rounded-2xl p-12 shadow-2xl border-2 border-blue-600 max-w-6xl mx-auto">
+            <h3 className="text-3xl font-bold text-slate-900 mb-10 text-center">
+              Why Buyers Choose Marrow Experts
+            </h3>
+            
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="flex gap-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                  ✓
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-slate-900 mb-2">Stop Getting Ignored</div>
+                  <div className="text-slate-600">No more sending dozens of cold messages that never get responses</div>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                  ✓
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-slate-900 mb-2">Guaranteed Response</div>
+                  <div className="text-slate-600">You respond within 24 hours or they get their money back</div>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                  ✓
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-slate-900 mb-2">Direct Access</div>
+                  <div className="text-slate-600">Skip networking games and go straight to the experts they need</div>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                  ✓
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-slate-900 mb-2">Massive ROI</div>
+                  <div className="text-slate-600">One great connection or piece of advice can be worth 100x the booking fee</div>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                  ✓
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-slate-900 mb-2">Serious Conversations Only</div>
+                  <div className="text-slate-600">Paying filters out tire-kickers - you both know it's valuable</div>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                  ✓
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-slate-900 mb-2">Time Is Money</div>
+                  <div className="text-slate-600">They'd rather pay $200 than waste weeks hoping for free advice</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Win-Win Section */}
+      <section className="py-24 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-slate-900 mb-4">
+              The Perfect Marketplace for Everyone
+            </h2>
+            <p className="text-2xl text-slate-600">
+              Connecting those who know with those who need to know
+            </p>
+          </div>
+          
+          {/* Two Sides */}
+          <div className="grid md:grid-cols-2 gap-12 mb-16">
+            {/* Experts Side */}
+            <div className="bg-white rounded-3xl p-12 shadow-2xl border-3 border-slate-200 hover:border-blue-600 transition-all">
+              <div className="text-center mb-10">
+                <div className="text-6xl mb-4">💰</div>
+                <h3 className="text-3xl font-bold text-slate-900 mb-2">Experts Get</h3>
+                <p className="text-slate-600 text-lg">Monetize what you've built</p>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-lg text-slate-900 font-semibold pt-1">
+                    Monetize your expertise & network without extra marketing
+                  </div>
+                </div>
+                
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-lg text-slate-900 font-semibold pt-1">
+                    Control your time, pricing, and availability completely
+                  </div>
+                </div>
+                
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-lg text-slate-900 font-semibold pt-1">
+                    Get paid automatically - no chasing invoices
+                  </div>
+                </div>
+                
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-lg text-slate-900 font-semibold pt-1">
+                    Filter for serious inquiries only - no tire-kickers
+                  </div>
+                </div>
+                
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-lg text-slate-900 font-semibold pt-1">
+                    Turn ignored requests into revenue streams
+                  </div>
+                </div>
+                
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-lg text-slate-900 font-semibold pt-1">
+                    Build your reputation as a go-to expert
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Seekers Side */}
+            <div className="bg-white rounded-3xl p-12 shadow-2xl border-3 border-slate-200 hover:border-blue-600 transition-all">
+              <div className="text-center mb-10">
+                <div className="text-6xl mb-4">🎯</div>
+                <h3 className="text-3xl font-bold text-slate-900 mb-2">Seekers Get</h3>
+                <p className="text-slate-600 text-lg">Fast access to the right people</p>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-lg text-slate-900 font-semibold pt-1">
+                    Guaranteed responses within 24 hours - no ghosting
+                  </div>
+                </div>
+                
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-lg text-slate-900 font-semibold pt-1">
+                    Direct access to top professionals in any industry
+                  </div>
+                </div>
+                
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-lg text-slate-900 font-semibold pt-1">
+                    Skip the networking games and cold outreach
+                  </div>
+                </div>
+                
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-lg text-slate-900 font-semibold pt-1">
+                    Real ROI - advice that can change your career
+                  </div>
+                </div>
+                
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-lg text-slate-900 font-semibold pt-1">
+                    Save weeks of time trying to get a single response
+                  </div>
+                </div>
+                
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-lg text-slate-900 font-semibold pt-1">
+                    Build relationships with industry leaders
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Social Proof Footer */}
+          <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-12 text-center text-white shadow-2xl">
+            <h3 className="text-3xl font-bold mb-10">Trusted by Thousands of Professionals Worldwide</h3>
+            <div className="grid md:grid-cols-3 gap-12">
+              <div>
+                <div className="text-6xl font-bold mb-2">5,000+</div>
+                <div className="text-blue-100 text-lg font-semibold">Active Professionals</div>
+              </div>
+              <div>
+                <div className="text-6xl font-bold mb-2">24hrs</div>
+                <div className="text-blue-100 text-lg font-semibold">Average Response Time</div>
+              </div>
+              <div>
+                <div className="text-6xl font-bold mb-2">98%</div>
+                <div className="text-blue-100 text-lg font-semibold">Satisfaction Rate</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-300 py-16 px-6">
         <div className="max-w-7xl mx-auto">
