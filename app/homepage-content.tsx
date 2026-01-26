@@ -574,34 +574,31 @@ export default function HomepageContent() {
           </div>
           
           {/* Discovery Flow */}
-          <div className="flex items-center justify-between gap-6 mb-16 max-w-6xl mx-auto">
-            <div className="flex-1 bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16 max-w-6xl mx-auto">
+            <div className="bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all">
               <div className="text-5xl mb-4">🔍</div>
               <div className="text-xl font-bold text-slate-900 mb-2">
                 Browse <span className="text-blue-600">LinkedIn</span>
               </div>
               <div className="text-slate-600">Looking for industry experts</div>
+              <div className="text-3xl text-blue-600 mt-4 md:hidden">↓</div>
             </div>
             
-            <div className="text-3xl text-blue-600">→</div>
-            
-            <div className="flex-1 bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all">
+            <div className="bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all">
               <div className="text-5xl mb-4">💎</div>
               <div className="text-xl font-bold text-slate-900 mb-2">See Marrow Badge</div>
               <div className="text-slate-600">Your profile stands out</div>
+              <div className="text-3xl text-blue-600 mt-4 md:hidden">↓</div>
             </div>
             
-            <div className="text-3xl text-blue-600">→</div>
-            
-            <div className="flex-1 bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all">
+            <div className="bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all">
               <div className="text-5xl mb-4">📅</div>
               <div className="text-xl font-bold text-slate-900 mb-2">Book Instantly</div>
               <div className="text-slate-600">Guaranteed response</div>
+              <div className="text-3xl text-blue-600 mt-4 md:hidden">↓</div>
             </div>
             
-            <div className="text-3xl text-blue-600">→</div>
-            
-            <div className="flex-1 bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all">
+            <div className="bg-white rounded-2xl p-8 text-center shadow-lg border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition-all">
               <div className="text-5xl mb-4">💰</div>
               <div className="text-xl font-bold text-slate-900 mb-2">You Get Paid</div>
               <div className="text-slate-600">Automatic deposit</div>
